@@ -1,0 +1,50 @@
+import { atom } from "jotai";
+import type { Doc } from "@workspace/backend/_generated/dataModel";
+
+// Auth status types
+export type AuthStatus =
+  | "loading" // Initial loading state
+  | "unauthenticated" // User not signed in
+  | "authenticated"; // User signed in
+
+// User atom - stores user data from Convex backend
+export const userAtom = atom<Doc<"users"> | null>(null);
+
+// Clerk auth state atom - stores Clerk's authentication state
+export const clerkAuthAtom = atom<{
+  isLoaded: boolean;
+  isSignedIn: boolean;
+}>({
+  isLoaded: false,
+  isSignedIn: false,
+});
+
+// Auth status atom - computed state based on Clerk auth and user
+export const authStatusAtom = atom<AuthStatus>((get) => {
+  const clerkAuth = get(clerkAuthAtom);
+  const user = get(userAtom);
+
+  // If Clerk is not loaded yet, we're still loading
+  if (!clerkAuth.isLoaded) {
+    return "loading";
+  }
+
+  // If Clerk says user is not signed in, they're unauthenticated
+  if (!clerkAuth.isSignedIn) {
+    return "unauthenticated";
+  }
+
+  // If user is null but Clerk says they're signed in, we're still loading user data
+  if (user === null) {
+    return "loading";
+  }
+
+  // User exists - fully authenticated
+  return "authenticated";
+});
+
+// Derived atoms for convenience
+export const isAuthenticatedAtom = atom(
+  (get) => get(authStatusAtom) === "authenticated"
+);
+export const isLoadingAtom = atom((get) => get(authStatusAtom) === "loading");

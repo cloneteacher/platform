@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/backend",
+  "type": "module",
+  "scripts": {
+    "dev": "convex dev",
+    "setup": "convex dev --until-success",
+    "deploy": "convex deploy"
+  },
+  "exports": {
+    "./convex": "./convex/*.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "@clerk/backend": "^2.9.2",
+    "@convex-dev/agent": "^0.2.1",
+    "@convex-dev/auth": "^0.0.90",
+    "@openrouter/ai-sdk-provider": "^1.2.0",
+    "ai": "^5.0.17",
+    "convex": "^1.25.4",
+    "svix": "^1.79.0"
+  }
+}
