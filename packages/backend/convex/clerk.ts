@@ -58,14 +58,20 @@ export const webhook = httpAction(async (ctx, request) => {
         ? `${firstName} ${lastName}`
         : firstName || lastName || undefined;
 
-    console.log("Processing user:", { clerkId, email, name });
+    // Extract role from public metadata (set during sign-up or admin creation)
+    const role = userData.public_metadata?.role || "student";
+
+    console.log("Processing user:", { clerkId, email, firstName, lastName, role });
 
     try {
       // Call internal mutation to sync user
       await ctx.runMutation(internal.clerk.syncUser, {
         clerkId,
         email,
+        firstName,
+        lastName,
         name,
+        role,
       });
       console.log("User synced successfully");
     } catch (error) {
@@ -82,7 +88,10 @@ export const syncUser = internalMutation({
   args: {
     clerkId: v.string(),
     email: v.string(),
+    firstName: v.string(),
+    lastName: v.string(),
     name: v.optional(v.string()),
+    role: v.union(v.literal("admin"), v.literal("teacher"), v.literal("student")),
   },
   handler: async (ctx, args) => {
     console.log("Syncing user:", args);
@@ -98,7 +107,10 @@ export const syncUser = internalMutation({
       // Update existing user
       await ctx.db.patch(existingUser._id, {
         email: args.email,
+        firstName: args.firstName,
+        lastName: args.lastName,
         name: args.name,
+        role: args.role,
       });
     } else {
       console.log("Creating new user");
@@ -106,7 +118,10 @@ export const syncUser = internalMutation({
       const userId = await ctx.db.insert("users", {
         clerkId: args.clerkId,
         email: args.email,
+        firstName: args.firstName,
+        lastName: args.lastName,
         name: args.name,
+        role: args.role,
       });
       console.log("User created with ID:", userId);
     }

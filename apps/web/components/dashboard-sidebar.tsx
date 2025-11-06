@@ -3,23 +3,77 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@workspace/ui/lib/utils";
-import { LayoutDashboard } from "lucide-react";
-
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-];
+import { LayoutDashboard, Users, BookOpen, GraduationCap, UserCog } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
+  isCollapsed: boolean;
   onClose: () => void;
 }
 
-export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
+export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { user, isLoading } = useCurrentUser();
+
+  // Navigation based on role
+  const getNavigation = () => {
+    if (!user) return [];
+
+    const baseNav = [
+      {
+        name: "Dashboard",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+      },
+    ];
+
+    if (user.role === "admin") {
+      return [
+        ...baseNav,
+        {
+          name: "Profesores",
+          href: "/admin/teachers",
+          icon: UserCog,
+        },
+      ];
+    }
+
+    if (user.role === "teacher") {
+      return [
+        ...baseNav,
+        {
+          name: "Asignaturas",
+          href: "/teacher/subjects",
+          icon: BookOpen,
+        },
+        {
+          name: "Alumnos",
+          href: "/teacher/students",
+          icon: Users,
+        },
+      ];
+    }
+
+    if (user.role === "student") {
+      return [
+        ...baseNav,
+        {
+          name: "Mis Asignaturas",
+          href: "/student/subjects",
+          icon: GraduationCap,
+        },
+      ];
+    }
+
+    return baseNav;
+  };
+
+  const navigation = getNavigation();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <>
@@ -34,29 +88,33 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform bg-sidebar border-r border-sidebar-border transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-50 transform bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          isCollapsed ? "lg:w-16" : "lg:w-64",
+          "w-64" // Always full width on mobile
         )}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex h-16 items-center border-b border-sidebar-border px-6">
+          <div className="flex h-16 items-center border-b border-sidebar-border px-4">
             <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
-                <span className="text-sidebar-primary-foreground font-bold text-sm">
-                  A
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+                <span className="text-primary-foreground font-bold text-sm">
+                  E
                 </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-lg font-semibold text-sidebar-foreground truncate">
-                  App
-                </h1>
-              </div>
+              {!isCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-lg font-semibold text-sidebar-foreground truncate">
+                    EduTeach
+                  </h1>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 px-4 py-4">
+          <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -66,25 +124,30 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    isCollapsed && "justify-center"
                   )}
+                  title={isCollapsed ? item.name : undefined}
                 >
-                  <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
-                  <span className="truncate">{item.name}</span>
+                  <Icon className={cn("h-5 w-5 flex-shrink-0", !isCollapsed && "mr-3")} />
+                  {!isCollapsed && <span className="truncate">{item.name}</span>}
                 </Link>
               );
             })}
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-sidebar-border p-4">
-            <div className="text-xs text-muted-foreground">
-              <p>Template v1.0</p>
+          {!isCollapsed && (
+            <div className="border-t border-sidebar-border p-4">
+              <div className="text-xs text-muted-foreground">
+                <p>{user?.firstName} {user?.lastName}</p>
+                <p className="text-xs capitalize">{user?.role}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

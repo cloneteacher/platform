@@ -11,22 +11,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
-import { Menu, X, LogOut, Sun, Moon } from "lucide-react";
+import { Menu, X, LogOut, Sun, Moon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 
 interface DashboardTopbarProps {
   onMenuClick: () => void;
+  onCollapseClick: () => void;
   isSidebarOpen: boolean;
+  isSidebarCollapsed: boolean;
 }
 
 export function DashboardTopbar({
   onMenuClick,
+  onCollapseClick,
   isSidebarOpen,
+  isSidebarCollapsed,
 }: DashboardTopbarProps) {
   const { signOut } = useClerk();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { user } = useCurrentUser();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -40,6 +47,11 @@ export function DashboardTopbar({
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const getInitials = () => {
+    if (!user) return "U";
+    return `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase();
   };
 
   return (
@@ -59,19 +71,44 @@ export function DashboardTopbar({
           )}
         </Button>
 
-        {/* Page title */}
-        <div>
-          <h1 className="text-xl font-semibold text-foreground hidden md:block">
-            Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground hidden md:block">
-            Panel de control
-          </p>
-        </div>
+        {/* Desktop collapse button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCollapseClick}
+          className="hidden lg:flex"
+        >
+          {isSidebarCollapsed ? (
+            <PanelLeftOpen className="h-5 w-5" />
+          ) : (
+            <PanelLeftClose className="h-5 w-5" />
+          )}
+        </Button>
       </div>
 
       {/* Right side */}
       <div className="flex items-center space-x-4">
+        {/* User info */}
+        {user && (
+          <div className="hidden md:flex items-center space-x-3">
+            <div className="text-right">
+              <p className="text-sm font-medium text-foreground">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="text-xs text-muted-foreground capitalize">
+                {user.role === "admin" && "Administrador"}
+                {user.role === "teacher" && "Profesor"}
+                {user.role === "student" && "Estudiante"}
+              </p>
+            </div>
+            <Avatar className="h-9 w-9">
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        )}
+
         {/* Theme toggle button */}
         <Button variant="ghost" size="sm" onClick={toggleTheme}>
           {theme === "dark" ? (
@@ -89,7 +126,9 @@ export function DashboardTopbar({
           disabled={isLoggingOut}
         >
           <LogOut className="h-4 w-4 mr-2" />
-          {isLoggingOut ? "Cerrando..." : "Cerrar Sesión"}
+          <span className="hidden sm:inline">
+            {isLoggingOut ? "Cerrando..." : "Cerrar Sesión"}
+          </span>
         </Button>
       </div>
 

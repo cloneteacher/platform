@@ -1,206 +1,305 @@
-# Monorepo Template
+# EduTeach - Plataforma Educativa con RAG
 
-Template limpio para crear proyectos full-stack usando un monorepo con Turbo.
+Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y capacidades RAG (Retrieval-Augmented Generation) para asistencia inteligente en el estudio.
 
-## Stack Tecnológico
+## 🚀 Características Principales
+
+### Sistema Multi-Rol
+- **Admin**: Gestión de profesores y estadísticas del sistema
+- **Profesores**: Creación de asignaturas, temas, gestión de archivos y asignación de alumnos
+- **Estudiantes**: Acceso a asignaturas, chat RAG, materiales y exámenes
+
+### Funcionalidades Implementadas
+
+#### Para Administradores
+- ✅ Creación y gestión de profesores
+- ✅ Dashboard con estadísticas globales
+- ✅ Vista de todos los usuarios del sistema
+
+#### Para Profesores
+- ✅ CRUD completo de asignaturas y temas
+- ✅ Gestor de archivos con Convex Storage
+  - Upload múltiple (PDF, Word, Excel, PowerPoint)
+  - Descarga y eliminación de archivos
+- ✅ Asignación de estudiantes a asignaturas
+- ✅ Vista de todos los estudiantes
+
+#### Para Estudiantes
+- ✅ Vista de asignaturas asignadas
+- ✅ Navegación por temas
+- ✅ Interface de estudio con 3 tabs:
+  - **Chatbot**: Asistente IA para consultas (placeholder)
+  - **Materiales**: Descarga de archivos del profesor
+  - **Exámenes**: Sistema de evaluación (placeholder)
+
+### Diseño UI/UX
+- ✅ Diseño limpio con fondo blanco
+- ✅ Acento color naranja para elementos importantes
+- ✅ Tipografía Geist (estilo Google)
+- ✅ Sidebar colapsible con navegación dinámica
+- ✅ Componentes UI completos (shadcn/ui + Radix UI)
+- ✅ Responsive design
+
+## 📋 Stack Tecnológico
 
 ### Frontend
 - **Next.js 15** - Framework React con App Router
 - **Tailwind CSS** - Estilos utilitarios
-- **Radix UI** - Componentes accesibles (via shadcn/ui)
+- **Radix UI + shadcn/ui** - Componentes accesibles
 - **TypeScript** - Tipado estático
+- **Jotai** - Estado global
+- **React Hot Toast** - Notificaciones
 
 ### Backend
 - **Convex** - Backend as a Service con base de datos en tiempo real
 - **Clerk** - Autenticación y gestión de usuarios
-- **OpenRouter AI** - Integración con modelos de IA (configurado pero sin uso específico)
+- **Convex Storage** - Almacenamiento de archivos
 
 ### Herramientas
 - **Turbo** - Build system para monorepos
 - **pnpm** - Gestor de paquetes
-- **shadcn/ui** - Componentes UI reutilizables
 
-## Estructura del Proyecto
+## 🏗️ Estructura del Proyecto
 
 ```
 .
 ├── apps/
-│   └── web/              # Aplicación Next.js principal
-│       ├── app/          # Páginas y rutas (App Router)
-│       ├── components/   # Componentes específicos de la app
-│       └── lib/          # Utilidades y helpers
+│   └── web/                    # Aplicación Next.js
+│       ├── app/
+│       │   ├── (auth)/        # Rutas de autenticación
+│       │   │   ├── sign-in/   # Login con selector de rol
+│       │   │   └── sign-up/   # Registro (solo estudiantes)
+│       │   ├── (dashboard)/   # Rutas protegidas
+│       │   │   ├── admin/     # Vistas de administrador
+│       │   │   ├── teacher/   # Vistas de profesor
+│       │   │   └── student/   # Vistas de estudiante
+│       │   └── layout.tsx
+│       ├── components/        # Componentes de la app
+│       │   ├── admin/
+│       │   ├── teacher/
+│       │   ├── student/
+│       │   └── auth/
+│       └── hooks/             # Custom hooks
 ├── packages/
-│   ├── backend/          # Backend Convex
-│   │   └── convex/       # Funciones, queries, mutations y schema
-│   ├── ui/               # Componentes UI compartidos (shadcn/ui)
-│   ├── eslint-config/    # Configuración ESLint compartida
-│   └── typescript-config/# Configuración TypeScript compartida
-└── package.json          # Root package.json con scripts de Turbo
+│   ├── backend/               # Backend Convex
+│   │   └── convex/
+│   │       ├── schema.ts      # Schema de base de datos
+│   │       ├── subjects.ts    # CRUD asignaturas
+│   │       ├── topics.ts      # CRUD temas
+│   │       ├── files.ts       # Gestión archivos
+│   │       ├── enrollments.ts # Asignación estudiantes
+│   │       ├── admin.ts       # Funciones admin
+│   │       ├── clerk.ts       # Sincronización Clerk
+│   │       └── users.ts       # Queries usuarios
+│   └── ui/                    # Componentes UI compartidos
+│       └── src/components/
+└── package.json
 ```
 
-## Setup Inicial
+## 📊 Schema de Base de Datos
+
+### Tablas Principales
+
+#### `users`
+- email, firstName, lastName, name, clerkId
+- **role**: "admin" | "teacher" | "student"
+
+#### `subjects` (Asignaturas)
+- name, description, teacherId
+- createdAt, updatedAt
+
+#### `topics` (Temas)
+- subjectId, name, description, teacherId
+- createdAt, updatedAt
+
+#### `topicFiles` (Archivos)
+- topicId, subjectId, teacherId
+- fileName, fileType, storageId
+- uploadedAt
+
+#### `subjectEnrollments` (Inscripciones)
+- subjectId, userId (estudiante)
+- enrolledAt, enrolledBy
+
+#### `exams` (Exámenes)
+- topicId, subjectId, userId
+- questions[], status
+- createdAt
+
+#### `examResults` (Resultados)
+- examId, topicId, userId
+- answers[], score, totalQuestions
+- completedAt
+
+## 🚀 Setup Inicial
 
 ### Prerrequisitos
-
 - Node.js >= 20
 - pnpm >= 8
+- Cuenta en Clerk (https://clerk.com)
+- Cuenta en Convex (https://convex.dev)
 
-### Instalación
+### 1. Instalar Dependencias
 
 ```bash
-# Instalar dependencias
 pnpm install
-
-# Configurar variables de entorno
-cp apps/web/.env.example apps/web/.env.local
-cp packages/backend/.env.example packages/backend/.env.local
 ```
 
-### Variables de Entorno
+### 2. Configurar Variables de Entorno
 
 #### Frontend (`apps/web/.env.local`)
 ```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-NEXT_PUBLIC_CONVEX_URL=your_convex_url
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CONVEX_URL=https://...convex.cloud
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
 #### Backend (`packages/backend/.env.local`)
 ```env
-CONVEX_DEPLOYMENT=your_deployment_url
-CLERK_JWT_ISSUER_DOMAIN=your_clerk_issuer_domain
-CLERK_WEBHOOK_SECRET=your_clerk_webhook_secret
-OPENROUTER_API_KEY=your_openrouter_api_key
+CLERK_WEBHOOK_SECRET=whsec_...
+CONVEX_DEPLOYMENT=dev:...
 ```
 
-### Configurar Clerk
+### 3. Configurar Clerk
 
-1. Crea una cuenta en [Clerk](https://clerk.com)
-2. Crea una aplicación
-3. Configura un JWT Template llamado "convex" con:
-   - Token lifetime: 1 hour
-   - Signing algorithm: RS256
-   - Obtén el Issuer Domain del template
-4. Configura un webhook apuntando a: `https://your-convex-site.com/clerk-webhook`
+1. Crear proyecto en Clerk
+2. Habilitar "Email" como método de autenticación
+3. Requerir firstName y lastName en el registro
+4. Configurar webhook:
+   - URL: `https://your-deployment.convex.site/http/clerk/webhook`
+   - Eventos: `user.created`, `user.updated`
+5. Copiar el webhook secret a `.env.local`
 
-### Configurar Convex
-
-1. Crea una cuenta en [Convex](https://convex.dev)
-2. Crea un proyecto
-3. Ejecuta `pnpm run deploy` desde `packages/backend`
-4. Copia la URL del deployment a tus variables de entorno
-
-## Scripts Disponibles
-
-### Desarrollo
+### 4. Configurar Convex
 
 ```bash
-# Iniciar todos los servicios en modo desarrollo
+# En packages/backend/
+npx convex dev
+```
+
+Sigue las instrucciones para vincular tu proyecto de Convex.
+
+### 5. Iniciar la Aplicación
+
+```bash
+# En el root del proyecto
 pnpm dev
-
-# Solo frontend
-pnpm --filter web dev
-
-# Solo backend
-pnpm --filter @workspace/backend dev
 ```
 
-### Build
+La aplicación estará disponible en `http://localhost:3000`
 
-```bash
-# Build de todos los paquetes
-pnpm build
+## 👥 Primeros Pasos
 
-# Build solo del frontend
-pnpm --filter web build
-```
+### Crear el Primer Administrador
 
-### Linting
+1. Registrate como estudiante (sign-up)
+2. En Convex Dashboard, ve a tu tabla `users`
+3. Cambia el `role` de tu usuario a `"admin"`
+4. Refresca la aplicación
 
-```bash
-# Lint de todos los paquetes
-pnpm lint
+### Flujo Típico de Uso
 
-# Lint solo del frontend
-pnpm --filter web lint
-```
+1. **Admin** crea profesores
+2. **Profesores** crean asignaturas y temas
+3. **Profesores** suben archivos a los temas
+4. **Profesores** asignan estudiantes a asignaturas
+5. **Estudiantes** acceden a sus asignaturas
+6. **Estudiantes** estudian con el chatbot y materiales
 
-### Deploy
+## 🎨 Personalización de Diseño
 
-```bash
-# Deploy del backend Convex
-pnpm deploy
-```
+Los colores principales se definen en `packages/ui/src/styles/globals.css`:
 
-## Agregar Componentes UI
-
-Este template usa [shadcn/ui](https://ui.shadcn.com). Para agregar componentes:
-
-```bash
-cd apps/web
-pnpm dlx shadcn@latest add button
-pnpm dlx shadcn@latest add card
-# etc...
-```
-
-Los componentes se agregarán automáticamente en `packages/ui/src/components`.
-
-## Uso de Componentes
-
-```tsx
-import { Button } from "@workspace/ui/components/button"
-import { Card } from "@workspace/ui/components/card"
-
-export default function MyComponent() {
-  return (
-    <Card>
-      <Button>Click me</Button>
-    </Card>
-  )
+```css
+:root {
+  --primary: oklch(0.65 0.22 50);      /* Naranja */
+  --background: oklch(1 0 0);           /* Blanco */
+  --foreground: oklch(0.2 0 0);         /* Gris oscuro */
+  /* ... más colores */
 }
 ```
 
-## Autenticación
+## 🔄 Próximas Características
 
-El template incluye autenticación con Clerk configurada. Los usuarios se sincronizan automáticamente con Convex a través de webhooks.
+### En Desarrollo (Placeholders Listos)
 
-### Rutas Protegidas
+1. **Chat RAG con IA**
+   - Integrar con OpenRouter/OpenAI
+   - Implementar embeddings de archivos
+   - Context retrieval desde documentos
 
-Las rutas bajo `/dashboard` requieren autenticación. El middleware redirige automáticamente a `/sign-in` si el usuario no está autenticado.
+2. **Sistema de Exámenes**
+   - Generación automática con IA
+   - Tipos: test, verdadero/falso, corta, desarrollo
+   - Corrección automática
+   - Historial de resultados
 
-### Hooks de Autenticación
+3. **Dashboard de Resultados**
+   - Vista para profesores
+   - Estadísticas por estudiante
+   - Análisis de rendimiento
 
-```tsx
-import { useAuthNavigation } from "@/hooks/use-auth-navigation"
-import { useAuthSync } from "@/hooks/use-auth-sync"
+## 📝 Scripts Disponibles
 
-// useAuthSync sincroniza el estado de autenticación
-useAuthSync()
+```bash
+# Desarrollo
+pnpm dev              # Inicia Next.js y Convex
 
-// useAuthNavigation proporciona utilidades de navegación
-const { authStatus, redirectToCorrectPage } = useAuthNavigation()
+# Build
+pnpm build            # Build de producción
+
+# Linting
+pnpm lint             # Ejecuta ESLint
+pnpm lint:fix         # Fix automático
+
+# Type checking
+pnpm typecheck        # Verifica tipos TypeScript
 ```
 
-## Base de Datos
+## 🔐 Seguridad
 
-El schema de Convex está en `packages/backend/convex/schema.ts`. Actualmente solo incluye la tabla `users` básica. Puedes agregar tus propias tablas según necesites.
+- ✅ Autenticación con Clerk
+- ✅ Middleware de protección de rutas por rol
+- ✅ Validación de permisos en mutations
+- ✅ Sincronización segura con webhooks
+- ✅ Storage seguro con Convex
 
-## Estructura de Rutas
+## 🐛 Troubleshooting
 
-- `/` - Landing page pública
-- `/sign-in` - Página de inicio de sesión
-- `/sign-up` - Página de registro
-- `/dashboard` - Dashboard protegido (requiere autenticación)
+### El login no funciona
+- Verifica que las keys de Clerk estén correctas
+- Asegúrate de que el webhook esté configurado
 
-## Próximos Pasos
+### Los archivos no se suben
+- Verifica que Convex esté corriendo
+- Revisa que el storageId sea válido
 
-1. Configura tus variables de entorno
-2. Configura Clerk y Convex
-3. Personaliza el schema de Convex según tus necesidades
-4. Agrega componentes UI con shadcn/ui
-5. Construye tu aplicación 🚀
+### Errores de tipo
+- Ejecuta `pnpm typecheck`
+- Regenera los tipos de Convex: `npx convex dev`
 
-## Licencia
+## 📚 Documentación de Dependencias
+
+- [Next.js](https://nextjs.org/docs)
+- [Convex](https://docs.convex.dev)
+- [Clerk](https://clerk.com/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Radix UI](https://www.radix-ui.com/docs)
+- [shadcn/ui](https://ui.shadcn.com)
+
+## 🤝 Contribuir
+
+Este es un proyecto educativo. Las contribuciones son bienvenidas.
+
+## 📄 Licencia
 
 MIT
+
+## 👨‍💻 Soporte
+
+Para preguntas o problemas, abre un issue en el repositorio.
+
+---
+
+**Hecho con ❤️ usando Next.js, Convex y Clerk**

@@ -1,6 +1,6 @@
 import { userAtom, clerkAuthAtom } from "@/lib/store/auth-atoms";
 import { api } from "@workspace/backend/_generated/api";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -12,8 +12,9 @@ import { useAuth } from "@clerk/nextjs";
 export function useAuthSync(): {
   user: ReturnType<typeof useQuery<typeof api.users.getCurrentUser>>;
 } {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useAuth();
   const user = useQuery(api.users.getCurrentUser);
+  const syncUser = useMutation(api.users.syncCurrentUser);
   const [, setUser] = useAtom(userAtom);
   const [, setClerkAuth] = useAtom(clerkAuthAtom);
 
@@ -24,6 +25,15 @@ export function useAuthSync(): {
       isSignedIn: isSignedIn ?? false,
     });
   }, [isLoaded, isSignedIn, setClerkAuth]);
+
+  // Sync user to Convex if authenticated but not in database
+  useEffect(() => {
+    if (isLoaded && isSignedIn && userId && user === null) {
+      syncUser().catch((error) => {
+        console.error("Error syncing user to Convex:", error);
+      });
+    }
+  }, [isLoaded, isSignedIn, userId, user, syncUser]);
 
   // Update user data
   useEffect(() => {

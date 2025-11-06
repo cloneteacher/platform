@@ -16,6 +16,7 @@ export default function DashboardLayout({
   const authStatus = useAtomValue(authStatusAtom);
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     // Redirect based on auth status
@@ -47,6 +48,7 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <DashboardSidebar
         isOpen={isSidebarOpen}
+        isCollapsed={isSidebarCollapsed}
         onClose={() => setIsSidebarOpen(false)}
       />
 
@@ -55,7 +57,9 @@ export default function DashboardLayout({
         {/* Topbar */}
         <DashboardTopbar
           onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          onCollapseClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           isSidebarOpen={isSidebarOpen}
+          isSidebarCollapsed={isSidebarCollapsed}
         />
 
         {/* Page content */}

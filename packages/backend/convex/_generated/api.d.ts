@@ -8,14 +8,13 @@
  * @module
  */
 
-import type * as appointments from "../appointments.js";
-import type * as businesses from "../businesses.js";
-import type * as chat from "../chat.js";
+import type * as admin from "../admin.js";
 import type * as clerk from "../clerk.js";
-import type * as email from "../email.js";
-import type * as googleCalendar from "../googleCalendar.js";
+import type * as enrollments from "../enrollments.js";
+import type * as files from "../files.js";
 import type * as http from "../http.js";
-import type * as telegram from "../telegram.js";
+import type * as subjects from "../subjects.js";
+import type * as topics from "../topics.js";
 import type * as users from "../users.js";
 
 import type {
@@ -33,14 +32,13 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  appointments: typeof appointments;
-  businesses: typeof businesses;
-  chat: typeof chat;
+  admin: typeof admin;
   clerk: typeof clerk;
-  email: typeof email;
-  googleCalendar: typeof googleCalendar;
+  enrollments: typeof enrollments;
+  files: typeof files;
   http: typeof http;
-  telegram: typeof telegram;
+  subjects: typeof subjects;
+  topics: typeof topics;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
