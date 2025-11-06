@@ -1,4 +1,4 @@
-# Guía de Setup Detallada - EduTeach
+# Guía de Setup Detallada - CloneTeacher
 
 Esta guía te llevará paso a paso desde cero hasta tener la aplicación funcionando localmente.
 
@@ -57,7 +57,7 @@ pnpm install
 
 1. Ve a https://dashboard.clerk.com
 2. Click en "Create Application"
-3. Nombre: "EduTeach" (o el que prefieras)
+3. Nombre: "CloneTeacher" (o el que prefieras)
 4. Selecciona proveedores de autenticación:
    - ✅ Email
    - ✅ Google (opcional)
@@ -108,7 +108,7 @@ npx convex dev
 
 1. Se abrirá el navegador automáticamente
 2. Inicia sesión o crea cuenta en Convex
-3. Crea un nuevo proyecto: "eduteach"
+3. Crea un nuevo proyecto: "CloneTeacher"
 4. El CLI mostrará:
    - ✅ Project created
    - ✅ Deployment URL: `https://[random].convex.cloud`
@@ -116,7 +116,7 @@ npx convex dev
 ### 4.3. Obtener URL de Webhook
 
 1. Ve al dashboard de Convex (https://dashboard.convex.dev)
-2. Selecciona tu proyecto "eduteach"
+2. Selecciona tu proyecto "CloneTeacher"
 3. Ve a **"Settings"** → **"HTTP Actions"**
 4. Copia la URL base: `https://[tu-deployment].convex.site`
 5. La URL del webhook será: `https://[tu-deployment].convex.site/http/clerk/webhook`
@@ -196,18 +196,21 @@ pnpm dev
 ```
 
 Esto iniciará:
+
 - ✅ Next.js en `http://localhost:3000`
 - ✅ Convex en modo desarrollo
 
 ### Opción B: Iniciar por Separado
 
 Terminal 1 (Backend):
+
 ```bash
 cd packages/backend
 npx convex dev
 ```
 
 Terminal 2 (Frontend):
+
 ```bash
 cd apps/web
 pnpm dev
@@ -276,18 +279,22 @@ pnpm dev
 ### Crear Datos de Prueba
 
 #### Como Admin:
+
 1. Crea 2-3 profesores
 
 #### Como Profesor:
+
 1. Crea 2 asignaturas (ej: "Matemáticas", "Historia")
 2. En cada asignatura, crea 2-3 temas
 3. Sube 1-2 archivos PDF a cada tema
 
 #### Como Profesor (asignación):
+
 1. Ve a "Alumnos"
 2. Asigna estudiantes a tus asignaturas
 
 #### Como Estudiante:
+
 1. Ve a "Mis Asignaturas"
 2. Abre una asignatura
 3. Accede a un tema
@@ -303,6 +310,7 @@ pnpm dev
 ### Error: "No se puede conectar a Convex"
 
 **Solución:**
+
 ```bash
 cd packages/backend
 npx convex dev
@@ -311,6 +319,7 @@ npx convex dev
 ### Error: "Clerk webhook failed"
 
 **Verificar:**
+
 1. URL del webhook en Clerk apunta a tu deployment de Convex
 2. Webhook secret está en `.env.local`
 3. Events `user.created` y `user.updated` están activados
@@ -320,15 +329,17 @@ npx convex dev
 **Causa:** El webhook no está funcionando
 
 **Solución:**
+
 1. Ve a Clerk Dashboard → Webhooks
 2. Revisa los logs del webhook
 3. Verifica que la URL y el secret sean correctos
 
-### Error: "Cannot read properties of undefined (reading '_id')"
+### Error: "Cannot read properties of undefined (reading '\_id')"
 
 **Causa:** El usuario no se sincronizó con Convex
 
 **Solución:**
+
 1. Cierra sesión
 2. Vuelve a iniciar sesión
 3. Verifica en Convex Dashboard que el usuario existe en la tabla `users`
@@ -382,4 +393,3 @@ npx convex dev
 Si llegaste hasta aquí, tu aplicación debería estar completamente funcional.
 
 ¿Problemas? Abre un issue en el repositorio.
-

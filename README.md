@@ -1,10 +1,11 @@
-# EduTeach - Plataforma Educativa con RAG
+# CloneTeacher - Plataforma Educativa con RAG
 
 Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y capacidades RAG (Retrieval-Augmented Generation) para asistencia inteligente en el estudio.
 
 ## 🚀 Características Principales
 
 ### Sistema Multi-Rol
+
 - **Admin**: Gestión de profesores y estadísticas del sistema
 - **Profesores**: Creación de asignaturas, temas, gestión de archivos y asignación de alumnos
 - **Estudiantes**: Acceso a asignaturas, chat RAG, materiales y exámenes
@@ -12,11 +13,13 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 ### Funcionalidades Implementadas
 
 #### Para Administradores
+
 - ✅ Creación y gestión de profesores
 - ✅ Dashboard con estadísticas globales
 - ✅ Vista de todos los usuarios del sistema
 
 #### Para Profesores
+
 - ✅ CRUD completo de asignaturas y temas
 - ✅ Gestor de archivos con Convex Storage
   - Upload múltiple (PDF, Word, Excel, PowerPoint)
@@ -25,6 +28,7 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 - ✅ Vista de todos los estudiantes
 
 #### Para Estudiantes
+
 - ✅ Vista de asignaturas asignadas
 - ✅ Navegación por temas
 - ✅ Interface de estudio con 3 tabs:
@@ -33,6 +37,7 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
   - **Exámenes**: Sistema de evaluación (placeholder)
 
 ### Diseño UI/UX
+
 - ✅ Diseño limpio con fondo blanco
 - ✅ Acento color naranja para elementos importantes
 - ✅ Tipografía Geist (estilo Google)
@@ -43,6 +48,7 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 ## 📋 Stack Tecnológico
 
 ### Frontend
+
 - **Next.js 15** - Framework React con App Router
 - **Tailwind CSS** - Estilos utilitarios
 - **Radix UI + shadcn/ui** - Componentes accesibles
@@ -51,11 +57,13 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 - **React Hot Toast** - Notificaciones
 
 ### Backend
+
 - **Convex** - Backend as a Service con base de datos en tiempo real
 - **Clerk** - Autenticación y gestión de usuarios
 - **Convex Storage** - Almacenamiento de archivos
 
 ### Herramientas
+
 - **Turbo** - Build system para monorepos
 - **pnpm** - Gestor de paquetes
 
@@ -101,32 +109,39 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 ### Tablas Principales
 
 #### `users`
+
 - email, firstName, lastName, name, clerkId
 - **role**: "admin" | "teacher" | "student"
 
 #### `subjects` (Asignaturas)
+
 - name, description, teacherId
 - createdAt, updatedAt
 
 #### `topics` (Temas)
+
 - subjectId, name, description, teacherId
 - createdAt, updatedAt
 
 #### `topicFiles` (Archivos)
+
 - topicId, subjectId, teacherId
 - fileName, fileType, storageId
 - uploadedAt
 
 #### `subjectEnrollments` (Inscripciones)
+
 - subjectId, userId (estudiante)
 - enrolledAt, enrolledBy
 
 #### `exams` (Exámenes)
+
 - topicId, subjectId, userId
 - questions[], status
 - createdAt
 
 #### `examResults` (Resultados)
+
 - examId, topicId, userId
 - answers[], score, totalQuestions
 - completedAt
@@ -134,6 +149,7 @@ Plataforma educativa completa con sistema de gestión de aprendizaje (LMS) y cap
 ## 🚀 Setup Inicial
 
 ### Prerrequisitos
+
 - Node.js >= 20
 - pnpm >= 8
 - Cuenta en Clerk (https://clerk.com)
@@ -148,6 +164,7 @@ pnpm install
 ### 2. Configurar Variables de Entorno
 
 #### Frontend (`apps/web/.env.local`)
+
 ```env
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
@@ -156,6 +173,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
 #### Backend (`packages/backend/.env.local`)
+
 ```env
 CLERK_WEBHOOK_SECRET=whsec_...
 CONVEX_DEPLOYMENT=dev:...
@@ -213,9 +231,9 @@ Los colores principales se definen en `packages/ui/src/styles/globals.css`:
 
 ```css
 :root {
-  --primary: oklch(0.65 0.22 50);      /* Naranja */
-  --background: oklch(1 0 0);           /* Blanco */
-  --foreground: oklch(0.2 0 0);         /* Gris oscuro */
+  --primary: oklch(0.65 0.22 50); /* Naranja */
+  --background: oklch(1 0 0); /* Blanco */
+  --foreground: oklch(0.2 0 0); /* Gris oscuro */
   /* ... más colores */
 }
 ```
@@ -268,14 +286,17 @@ pnpm typecheck        # Verifica tipos TypeScript
 ## 🐛 Troubleshooting
 
 ### El login no funciona
+
 - Verifica que las keys de Clerk estén correctas
 - Asegúrate de que el webhook esté configurado
 
 ### Los archivos no se suben
+
 - Verifica que Convex esté corriendo
 - Revisa que el storageId sea válido
 
 ### Errores de tipo
+
 - Ejecuta `pnpm typecheck`
 - Regenera los tipos de Convex: `npx convex dev`
 

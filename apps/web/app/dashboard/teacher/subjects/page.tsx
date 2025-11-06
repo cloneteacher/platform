@@ -80,7 +80,7 @@ export default function SubjectsPage() {
               key={subject._id}
               className="hover:shadow-md transition-shadow cursor-pointer group"
             >
-              <Link href={`/teacher/subjects/${subject._id}`}>
+              <Link href={`/dashboard/teacher/subjects/${subject._id}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center group-hover:text-primary transition-colors">
                     <BookOpen className="mr-2 h-5 w-5" />

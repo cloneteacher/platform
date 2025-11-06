@@ -23,7 +23,7 @@ export function TeacherAuthForm() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center">
       <SignIn
         appearance={appearance}
         routing="path"

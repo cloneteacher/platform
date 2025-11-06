@@ -114,7 +114,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/admin/teachers">
+              <Link href="/dashboard/admin/teachers">
                 <Button className="w-full">
                   <UserCog className="mr-2 h-4 w-4" />
                   Ver Profesores
@@ -154,7 +154,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/teacher/subjects">
+              <Link href="/dashboard/teacher/subjects">
                 <Button className="w-full">
                   Ver Asignaturas
                   <ArrowRight className="ml-auto h-4 w-4" />
@@ -174,7 +174,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/teacher/students">
+              <Link href="/dashboard/teacher/students">
                 <Button className="w-full">
                   Ver Alumnos
                   <ArrowRight className="ml-auto h-4 w-4" />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/teacher/subjects">
+              <Link href="/dashboard/teacher/subjects">
                 <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                   Crear Ahora
                   <ArrowRight className="ml-auto h-4 w-4" />
@@ -233,7 +233,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/student/subjects">
+              <Link href="/dashboard/student/subjects">
                 <Button className="w-full">
                   Ver Asignaturas
                   <ArrowRight className="ml-auto h-4 w-4" />
@@ -250,7 +250,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/student/subjects">
+              <Link href="/dashboard/student/subjects">
                 <Button variant="outline" className="w-full">
                   Ir a Asignaturas
                   <ArrowRight className="ml-auto h-4 w-4" />

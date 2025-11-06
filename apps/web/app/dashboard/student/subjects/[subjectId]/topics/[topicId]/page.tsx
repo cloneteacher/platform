@@ -43,7 +43,7 @@ export default function StudentTopicDetailPage({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">Tema no encontrado</p>
-            <Link href={`/student/subjects/${subjectId}`}>
+            <Link href={`/dashboard/student/subjects/${subjectId}`}>
               <Button variant="outline" className="mt-4">
                 Volver a la Asignatura
               </Button>
@@ -58,7 +58,7 @@ export default function StudentTopicDetailPage({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <Link href={`/student/subjects/${subjectId}`}>
+        <Link href={`/dashboard/student/subjects/${subjectId}`}>
           <Button variant="ghost" size="sm" className="mb-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver a la Asignatura

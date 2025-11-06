@@ -57,7 +57,7 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center">
       {mode === "sign-in" ? (
         <SignIn
           appearance={appearance}

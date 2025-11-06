@@ -68,7 +68,7 @@ const DialogContent = ({ className, children }: DialogContentProps) => {
   return (
     <Card
       className={cn(
-        "relative z-50 w-full max-w-md bg-card border-border",
+        "relative z-50 w-full max-w-md bg-card border-border p-0",
         className
       )}
     >
@@ -79,7 +79,7 @@ const DialogContent = ({ className, children }: DialogContentProps) => {
 
 const DialogHeader = ({ children }: DialogHeaderProps) => {
   return (
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <CardHeader className="flex flex-col space-y-1.5 pb-4 px-6 pt-6">
       {children}
     </CardHeader>
   );
@@ -99,7 +99,7 @@ const DialogDescription = ({ children }: DialogDescriptionProps) => {
 
 const DialogFooter = ({ children }: DialogFooterProps) => {
   return (
-    <CardContent className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-6">
+    <CardContent className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 pt-4 pb-6 px-6">
       {children}
     </CardContent>
   );

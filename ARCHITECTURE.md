@@ -1,10 +1,11 @@
-# Arquitectura de EduTeach
+# Arquitectura de CloneTeacher
 
 Documentación técnica detallada de la arquitectura del proyecto.
 
 ## 📐 Visión General
 
-EduTeach es una aplicación monorepo construida con:
+CloneTeacher es una aplicación monorepo construida con:
+
 - **Frontend**: Next.js 15 (App Router)
 - **Backend**: Convex (BaaS)
 - **Auth**: Clerk
@@ -131,7 +132,7 @@ admin > teacher > student
 export default clerkMiddleware(async (auth, request) => {
   const { userId, sessionClaims } = await auth();
   const role = sessionClaims?.metadata?.role;
-  
+
   // Lógica de protección por rol
   if (isAdminRoute(request) && role !== "admin") {
     return redirect("/dashboard");
@@ -147,12 +148,12 @@ export default clerkMiddleware(async (auth, request) => {
 export async function requireTeacher(ctx: QueryCtx | MutationCtx) {
   const user = await ctx.auth.getUserIdentity();
   if (!user) throw new Error("Not authenticated");
-  
+
   const userData = await getUserByClerkId(ctx, user.subject);
   if (!userData || (userData.role !== "teacher" && userData.role !== "admin")) {
     throw new Error("Not authorized");
   }
-  
+
   return userData;
 }
 ```
@@ -177,7 +178,7 @@ export default defineSchema({
       v.literal("student")
     ),
   }).index("by_clerk_id", ["clerkId"]),
-  
+
   subjects: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
@@ -185,7 +186,7 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_teacher", ["teacherId"]),
-  
+
   topics: defineTable({
     subjectId: v.id("subjects"),
     name: v.string(),
@@ -196,7 +197,7 @@ export default defineSchema({
   })
     .index("by_subject", ["subjectId"])
     .index("by_teacher", ["teacherId"]),
-  
+
   topicFiles: defineTable({
     topicId: v.id("topics"),
     subjectId: v.id("subjects"),
@@ -208,7 +209,7 @@ export default defineSchema({
   })
     .index("by_topic", ["topicId"])
     .index("by_subject", ["subjectId"]),
-  
+
   subjectEnrollments: defineTable({
     subjectId: v.id("subjects"),
     userId: v.id("users"),
@@ -218,7 +219,7 @@ export default defineSchema({
     .index("by_subject", ["subjectId"])
     .index("by_user", ["userId"])
     .index("by_subject_and_user", ["subjectId", "userId"]),
-  
+
   // Preparado para futura implementación
   exams: defineTable({
     topicId: v.id("topics"),
@@ -228,7 +229,7 @@ export default defineSchema({
     status: v.union(v.literal("draft"), v.literal("published")),
     createdAt: v.number(),
   }),
-  
+
   examResults: defineTable({
     examId: v.id("exams"),
     topicId: v.id("topics"),
@@ -340,19 +341,19 @@ await addTopicFile({
 /* packages/ui/src/styles/globals.css */
 :root {
   /* Palette principal */
-  --primary: oklch(0.65 0.22 50);        /* Naranja */
-  --background: oklch(1 0 0);            /* Blanco */
-  --foreground: oklch(0.2 0 0);          /* Gris oscuro */
-  
+  --primary: oklch(0.65 0.22 50); /* Naranja */
+  --background: oklch(1 0 0); /* Blanco */
+  --foreground: oklch(0.2 0 0); /* Gris oscuro */
+
   /* Componentes */
   --card: oklch(1 0 0);
   --border: oklch(0.9 0 0);
   --input: oklch(0.95 0 0);
-  
+
   /* Sidebar */
   --sidebar: oklch(1 0 0);
   --sidebar-primary: oklch(0.65 0.22 50);
-  
+
   /* Radius */
   --radius: 0.5rem;
 }
@@ -418,7 +419,9 @@ export function useCurrentUser() {
 
 ```typescript
 // apps/web/lib/store/auth-atoms.ts
-export const authStatusAtom = atom<"loading" | "authenticated" | "unauthenticated">("loading");
+export const authStatusAtom = atom<
+  "loading" | "authenticated" | "unauthenticated"
+>("loading");
 ```
 
 ### Loading States
@@ -472,13 +475,13 @@ export function Component({ prop1, prop2 }: ComponentProps) {
   // 1. Hooks
   const [state, setState] = useState();
   const data = useQuery(...);
-  
+
   // 2. Handlers
   const handleAction = async () => { ... };
-  
+
   // 3. Effects
   useEffect(() => { ... }, []);
-  
+
   // 4. Render
   return ( ... );
 }
@@ -522,9 +525,9 @@ export const searchContext = action({
     const queryEmbedding = await generateEmbedding(query);
     const files = await ctx.db
       .query("topicFiles")
-      .withIndex("by_topic", q => q.eq("topicId", topicId))
+      .withIndex("by_topic", (q) => q.eq("topicId", topicId))
       .collect();
-    
+
     // Calcular similitud coseno
     const relevantChunks = findMostSimilar(queryEmbedding, files);
     return relevantChunks;
@@ -557,17 +560,17 @@ export const generateExam = action({
   handler: async (ctx, { topicId, difficulty, count }) => {
     const files = await getTopicFiles(ctx, topicId);
     const content = await extractContent(files);
-    
+
     const questions = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
-        { 
-          role: "system", 
-          content: `Generate ${count} ${difficulty} questions from: ${content}` 
+        {
+          role: "system",
+          content: `Generate ${count} ${difficulty} questions from: ${content}`,
         },
       ],
     });
-    
+
     return await ctx.db.insert("exams", {
       topicId,
       questions: JSON.parse(questions),
@@ -582,13 +585,13 @@ export const gradeExam = mutation({
   handler: async (ctx, { examId, answers }) => {
     const exam = await ctx.db.get(examId);
     let score = 0;
-    
+
     for (let i = 0; i < exam.questions.length; i++) {
       if (answers[i] === exam.questions[i].correctAnswer) {
         score++;
       }
     }
-    
+
     return await ctx.db.insert("examResults", {
       examId,
       userId: user._id,
@@ -653,7 +656,7 @@ Sentry.init({
 ```typescript
 // Prefetch data
 await client.prefetchQuery({
-  queryKey: ['subjects'],
+  queryKey: ["subjects"],
   queryFn: () => fetchSubjects(),
 });
 ```
@@ -663,12 +666,12 @@ await client.prefetchQuery({
 ```typescript
 import Image from 'next/image';
 
-<Image 
-  src="/avatar.png" 
-  alt="Avatar" 
-  width={40} 
-  height={40} 
-  priority 
+<Image
+  src="/avatar.png"
+  alt="Avatar"
+  width={40}
+  height={40}
+  priority
 />
 ```
 
@@ -694,4 +697,3 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 ---
 
 **Última actualización**: 2025-01-06
-

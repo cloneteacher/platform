@@ -44,7 +44,7 @@ export default function TopicDetailPage({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">Tema no encontrado</p>
-            <Link href={`/teacher/subjects/${subjectId}`}>
+            <Link href={`/dashboard/teacher/subjects/${subjectId}`}>
               <Button variant="outline" className="mt-4">
                 Volver a la Asignatura
               </Button>
@@ -60,7 +60,7 @@ export default function TopicDetailPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Link href={`/teacher/subjects/${subjectId}`}>
+          <Link href={`/dashboard/teacher/subjects/${subjectId}`}>
             <Button variant="ghost" size="sm" className="mb-2">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Volver a la Asignatura

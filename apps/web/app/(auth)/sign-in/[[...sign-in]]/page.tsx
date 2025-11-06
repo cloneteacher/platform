@@ -10,7 +10,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-6 mx-auto">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-foreground">Iniciar Sesión</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -20,7 +20,7 @@ export default function SignInPage() {
 
         <RoleSelector selectedRole={role} onRoleChange={setRole} />
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-center">
           {role === "student" ? (
             <StudentAuthForm mode="sign-in" />
           ) : (
@@ -40,4 +40,3 @@ export default function SignInPage() {
     </div>
   );
 }
-

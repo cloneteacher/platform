@@ -12,9 +12,9 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // Define role-based route matchers
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isTeacherRoute = createRouteMatcher(["/teacher(.*)"]);
-const isStudentRoute = createRouteMatcher(["/student(.*)"]);
+const isAdminRoute = createRouteMatcher(["/dashboard/admin(.*)"]);
+const isTeacherRoute = createRouteMatcher(["/dashboard/teacher(.*)"]);
+const isStudentRoute = createRouteMatcher(["/dashboard/student(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
   const url = request.nextUrl;

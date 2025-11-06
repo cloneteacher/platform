@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@workspace/ui/lib/utils";
-import { LayoutDashboard, Users, BookOpen, GraduationCap, UserCog } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  BookOpen,
+  GraduationCap,
+  UserCog,
+} from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface DashboardSidebarProps {
@@ -12,7 +19,11 @@ interface DashboardSidebarProps {
   onClose: () => void;
 }
 
-export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  isOpen,
+  isCollapsed,
+  onClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
   const { user, isLoading } = useCurrentUser();
 
@@ -33,7 +44,7 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
         ...baseNav,
         {
           name: "Profesores",
-          href: "/admin/teachers",
+          href: "/dashboard/admin/teachers",
           icon: UserCog,
         },
       ];
@@ -44,12 +55,12 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
         ...baseNav,
         {
           name: "Asignaturas",
-          href: "/teacher/subjects",
+          href: "/dashboard/teacher/subjects",
           icon: BookOpen,
         },
         {
           name: "Alumnos",
-          href: "/teacher/students",
+          href: "/dashboard/teacher/students",
           icon: Users,
         },
       ];
@@ -60,7 +71,7 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
         ...baseNav,
         {
           name: "Mis Asignaturas",
-          href: "/student/subjects",
+          href: "/dashboard/student/subjects",
           icon: GraduationCap,
         },
       ];
@@ -98,15 +109,20 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
           {/* Header */}
           <div className="flex h-16 items-center border-b border-sidebar-border px-4">
             <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                <span className="text-primary-foreground font-bold text-sm">
-                  E
-                </span>
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <Image
+                  src="/logo.png"
+                  alt="CloneTeacher Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                  priority
+                />
               </div>
               {!isCollapsed && (
                 <div className="flex-1 min-w-0">
                   <h1 className="text-lg font-semibold text-sidebar-foreground truncate">
-                    EduTeach
+                    CloneTeacher
                   </h1>
                 </div>
               )}
@@ -132,8 +148,15 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
                   )}
                   title={isCollapsed ? item.name : undefined}
                 >
-                  <Icon className={cn("h-5 w-5 flex-shrink-0", !isCollapsed && "mr-3")} />
-                  {!isCollapsed && <span className="truncate">{item.name}</span>}
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 flex-shrink-0",
+                      !isCollapsed && "mr-3"
+                    )}
+                  />
+                  {!isCollapsed && (
+                    <span className="truncate">{item.name}</span>
+                  )}
                 </Link>
               );
             })}
@@ -143,7 +166,9 @@ export function DashboardSidebar({ isOpen, isCollapsed, onClose }: DashboardSide
           {!isCollapsed && (
             <div className="border-t border-sidebar-border p-4">
               <div className="text-xs text-muted-foreground">
-                <p>{user?.firstName} {user?.lastName}</p>
+                <p>
+                  {user?.firstName} {user?.lastName}
+                </p>
                 <p className="text-xs capitalize">{user?.role}</p>
               </div>
             </div>

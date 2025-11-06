@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
@@ -11,10 +11,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
-import { Menu, X, LogOut, Sun, Moon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Menu, X, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@workspace/ui/components/avatar";
+import { UserProfilePanel } from "@/components/user-profile-panel";
 
 interface DashboardTopbarProps {
   onMenuClick: () => void;
@@ -30,9 +34,10 @@ export function DashboardTopbar({
   isSidebarCollapsed,
 }: DashboardTopbarProps) {
   const { signOut } = useClerk();
+  const { user: clerkUser } = useUser();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const [showProfilePanel, setShowProfilePanel] = useState(false);
   const { user } = useCurrentUser();
 
   const handleLogout = async () => {
@@ -43,10 +48,6 @@ export function DashboardTopbar({
       console.error("Error al cerrar sesión:", error);
       setIsLoggingOut(false);
     }
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
   };
 
   const getInitials = () => {
@@ -88,35 +89,54 @@ export function DashboardTopbar({
 
       {/* Right side */}
       <div className="flex items-center space-x-4">
-        {/* User info */}
+        {/* User info - Desktop */}
         {user && (
           <div className="hidden md:flex items-center space-x-3">
             <div className="text-right">
               <p className="text-sm font-medium text-foreground">
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-xs text-muted-foreground capitalize">
-                {user.role === "admin" && "Administrador"}
-                {user.role === "teacher" && "Profesor"}
-                {user.role === "student" && "Estudiante"}
-              </p>
             </div>
-            <Avatar className="h-9 w-9">
+            <button
+              onClick={() => setShowProfilePanel(true)}
+              className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full"
+              aria-label="Abrir panel de perfil"
+            >
+              <Avatar className="h-9 w-9">
+                {clerkUser?.imageUrl && (
+                  <AvatarImage
+                    src={clerkUser.imageUrl}
+                    alt={`${user.firstName} ${user.lastName}`}
+                  />
+                )}
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {getInitials()}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </div>
+        )}
+
+        {/* User avatar - Mobile */}
+        {user && (
+          <button
+            onClick={() => setShowProfilePanel(true)}
+            className="md:hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full"
+            aria-label="Abrir panel de perfil"
+          >
+            <Avatar className="h-8 w-8">
+              {clerkUser?.imageUrl && (
+                <AvatarImage
+                  src={clerkUser.imageUrl}
+                  alt={`${user.firstName} ${user.lastName}`}
+                />
+              )}
               <AvatarFallback className="bg-primary text-primary-foreground">
                 {getInitials()}
               </AvatarFallback>
             </Avatar>
-          </div>
+          </button>
         )}
-
-        {/* Theme toggle button */}
-        <Button variant="ghost" size="sm" onClick={toggleTheme}>
-          {theme === "dark" ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </Button>
 
         {/* Logout button */}
         <Button
@@ -160,6 +180,12 @@ export function DashboardTopbar({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* User profile panel */}
+      <UserProfilePanel
+        open={showProfilePanel}
+        onOpenChange={setShowProfilePanel}
+      />
     </header>
   );
 }
