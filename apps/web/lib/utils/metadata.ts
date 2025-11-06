@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://cloneteacher.com";
 
 export interface SEOConfig {
   title: string;
@@ -34,7 +35,7 @@ export function generateMetadata(config: SEOConfig): Metadata {
       title: config.title,
       description: config.description,
       url: url,
-      siteName: "App",
+      siteName: "CloneTeacher",
       images: imageUrl
         ? [
             {

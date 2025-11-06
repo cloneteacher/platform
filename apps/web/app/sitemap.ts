@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://cloneteacher.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const currentDate = new Date();
@@ -23,6 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
   ];
 }
