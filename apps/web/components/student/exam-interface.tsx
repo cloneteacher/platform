@@ -1,9 +1,15 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@workspace/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { FileQuestion, Plus } from "lucide-react";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface ExamInterfaceProps {
   topicId: Id<"topics">;
@@ -36,8 +42,9 @@ export function ExamInterface({ topicId }: ExamInterfaceProps) {
               Sistema de Exámenes en Desarrollo
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              Pronto podrás generar y realizar exámenes personalizados basados en los
-              materiales del tema, con corrección automática y retroalimentación.
+              Pronto podrás generar y realizar exámenes personalizados basados
+              en los materiales del tema, con corrección automática y
+              retroalimentación.
             </p>
           </div>
           <Button disabled variant="outline" className="mt-4">

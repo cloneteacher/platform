@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { Plus, UserCog, Mail } from "lucide-react";
 import { CreateTeacherDialog } from "@/components/admin/create-teacher-dialog";
@@ -119,4 +125,3 @@ export default function TeachersPage() {
     </div>
   );
 }
-

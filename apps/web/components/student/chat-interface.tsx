@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Send, Bot, User, Loader2 } from "lucide-react";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface Message {
   id: string;
@@ -21,8 +21,9 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
     {
       id: "welcome",
       role: "assistant",
-      content: "¡Hola! Soy tu asistente de estudio. Puedo ayudarte con preguntas sobre este tema. ¿Qué te gustaría saber?"
-    }
+      content:
+        "¡Hola! Soy tu asistente de estudio. Puedo ayudarte con preguntas sobre este tema. ¿Qué te gustaría saber?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,7 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
@@ -47,7 +48,7 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
       content: input.trim(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -57,9 +58,10 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Esta es una respuesta de placeholder. La funcionalidad RAG con IA se implementará próximamente. Por ahora, puedes consultar los materiales disponibles en la pestaña 'Materiales'.",
+        content:
+          "Esta es una respuesta de placeholder. La funcionalidad RAG con IA se implementará próximamente. Por ahora, puedes consultar los materiales disponibles en la pestaña 'Materiales'.",
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
       setIsLoading(false);
     }, 1000);
   };
@@ -127,4 +129,3 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
     </div>
   );
 }
-

@@ -1,10 +1,10 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { Button } from "@workspace/ui/components/button";
 import { FileText, Download, FolderOpen } from "lucide-react";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 import { toast } from "react-hot-toast";
 
 interface TopicMaterialsProps {
@@ -19,7 +19,7 @@ export function TopicMaterials({ topicId }: TopicMaterialsProps) {
       toast.error("URL del archivo no disponible");
       return;
     }
-    
+
     window.open(url, "_blank");
   };
 
@@ -101,4 +101,3 @@ export function TopicMaterials({ topicId }: TopicMaterialsProps) {
     </div>
   );
 }
-

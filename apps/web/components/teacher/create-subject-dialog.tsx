@@ -16,7 +16,7 @@ import { Textarea } from "@workspace/ui/components/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface CreateSubjectDialogProps {
@@ -24,7 +24,10 @@ interface CreateSubjectDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateSubjectDialog({ open, onOpenChange }: CreateSubjectDialogProps) {
+export function CreateSubjectDialog({
+  open,
+  onOpenChange,
+}: CreateSubjectDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -35,7 +38,7 @@ export function CreateSubjectDialog({ open, onOpenChange }: CreateSubjectDialogP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user?._id) {
       toast.error("Usuario no encontrado");
       return;
@@ -49,15 +52,15 @@ export function CreateSubjectDialog({ open, onOpenChange }: CreateSubjectDialogP
         description: formData.description || undefined,
         teacherId: user._id,
       });
-      
+
       toast.success("Asignatura creada exitosamente");
-      
+
       // Reset form
       setFormData({
         name: "",
         description: "",
       });
-      
+
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating subject:", error);
@@ -73,7 +76,8 @@ export function CreateSubjectDialog({ open, onOpenChange }: CreateSubjectDialogP
         <DialogHeader>
           <DialogTitle>Crear Nueva Asignatura</DialogTitle>
           <DialogDescription>
-            Completa los datos de la nueva asignatura. Podrás añadir temas después.
+            Completa los datos de la nueva asignatura. Podrás añadir temas
+            después.
           </DialogDescription>
         </DialogHeader>
 
@@ -133,4 +137,3 @@ export function CreateSubjectDialog({ open, onOpenChange }: CreateSubjectDialogP
     </Dialog>
   );
 }
-

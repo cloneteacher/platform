@@ -14,9 +14,9 @@ import { Label } from "@workspace/ui/components/label";
 import { Loader2, Upload, FileText, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface FileUploadDialogProps {
   open: boolean;
@@ -25,7 +25,12 @@ interface FileUploadDialogProps {
   subjectId: Id<"subjects">;
 }
 
-export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: FileUploadDialogProps) {
+export function FileUploadDialog({
+  open,
+  onOpenChange,
+  topicId,
+  subjectId,
+}: FileUploadDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,12 +44,12 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
   };
 
   const removeFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user?._id) {
       toast.error("Usuario no encontrado");
       return;
@@ -81,15 +86,17 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
           storageId,
         });
       }
-      
-      toast.success(`${selectedFiles.length} archivo(s) subido(s) exitosamente`);
-      
+
+      toast.success(
+        `${selectedFiles.length} archivo(s) subido(s) exitosamente`
+      );
+
       // Reset
       setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-      
+
       onOpenChange(false);
     } catch (error) {
       console.error("Error uploading files:", error);
@@ -105,7 +112,8 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
         <DialogHeader>
           <DialogTitle>Subir Archivos</DialogTitle>
           <DialogDescription>
-            Selecciona los archivos que quieres añadir a este tema (PDF, Word, etc.)
+            Selecciona los archivos que quieres añadir a este tema (PDF, Word,
+            etc.)
           </DialogDescription>
         </DialogHeader>
 
@@ -113,7 +121,8 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="files">Archivos</Label>
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer"
+              <div
+                className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
@@ -178,7 +187,10 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading || selectedFiles.length === 0}>
+            <Button
+              type="submit"
+              disabled={isLoading || selectedFiles.length === 0}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -187,7 +199,8 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
               ) : (
                 <>
                   <Upload className="mr-2 h-4 w-4" />
-                  Subir {selectedFiles.length > 0 && `(${selectedFiles.length})`}
+                  Subir{" "}
+                  {selectedFiles.length > 0 && `(${selectedFiles.length})`}
                 </>
               )}
             </Button>
@@ -197,4 +210,3 @@ export function FileUploadDialog({ open, onOpenChange, topicId, subjectId }: Fil
     </Dialog>
   );
 }
-

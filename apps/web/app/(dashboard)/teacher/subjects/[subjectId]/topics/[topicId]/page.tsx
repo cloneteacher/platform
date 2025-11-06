@@ -2,19 +2,25 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { ArrowLeft, Upload, FileText } from "lucide-react";
 import Link from "next/link";
-import { Id } from "../../../../../../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 import { FileUploadDialog } from "@/components/teacher/file-upload-dialog";
 import { FilesList } from "@/components/teacher/files-list";
 
-export default function TopicDetailPage({ 
-  params 
-}: { 
-  params: { subjectId: Id<"subjects">; topicId: Id<"topics"> } 
+export default function TopicDetailPage({
+  params,
+}: {
+  params: { subjectId: Id<"subjects">; topicId: Id<"topics"> };
 }) {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const topic = useQuery(api.topics.getById, { topicId: params.topicId });
@@ -78,7 +84,9 @@ export default function TopicDetailPage({
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{files.length}</div>
+            <div className="text-2xl font-bold text-primary">
+              {files.length}
+            </div>
             <p className="text-xs text-muted-foreground">Documentos subidos</p>
           </CardContent>
         </Card>
@@ -107,4 +115,3 @@ export default function TopicDetailPage({
     </div>
   );
 }
-

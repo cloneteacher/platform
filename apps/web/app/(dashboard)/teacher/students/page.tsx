@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { Users, UserPlus } from "lucide-react";
 import {
@@ -25,7 +31,9 @@ export default function StudentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestión de Alumnos</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Gestión de Alumnos
+          </h1>
           <p className="text-muted-foreground mt-2">
             Visualiza y asigna estudiantes a tus asignaturas
           </p>
@@ -118,4 +126,3 @@ export default function StudentsPage() {
     </div>
   );
 }
-

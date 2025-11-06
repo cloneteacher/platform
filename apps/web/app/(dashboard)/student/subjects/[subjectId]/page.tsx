@@ -1,20 +1,30 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { ArrowLeft, FileText, Layers } from "lucide-react";
 import Link from "next/link";
-import { Id } from "../../../../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
-export default function StudentSubjectDetailPage({ 
-  params 
-}: { 
-  params: { subjectId: Id<"subjects"> } 
+export default function StudentSubjectDetailPage({
+  params,
+}: {
+  params: { subjectId: Id<"subjects"> };
 }) {
-  const subject = useQuery(api.subjects.getById, { subjectId: params.subjectId });
-  const topics = useQuery(api.topics.getBySubject, { subjectId: params.subjectId });
+  const subject = useQuery(api.subjects.getById, {
+    subjectId: params.subjectId,
+  });
+  const topics = useQuery(api.topics.getBySubject, {
+    subjectId: params.subjectId,
+  });
 
   if (subject === undefined || topics === undefined) {
     return (
@@ -64,11 +74,15 @@ export default function StudentSubjectDetailPage({
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Temas Disponibles</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Temas Disponibles
+            </CardTitle>
             <Layers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{topics.length}</div>
+            <div className="text-2xl font-bold text-primary">
+              {topics.length}
+            </div>
             <p className="text-xs text-muted-foreground">Temas para estudiar</p>
           </CardContent>
         </Card>
@@ -96,7 +110,9 @@ export default function StudentSubjectDetailPage({
                 key={topic._id}
                 className="hover:shadow-md transition-shadow cursor-pointer group"
               >
-                <Link href={`/student/subjects/${params.subjectId}/topics/${topic._id}`}>
+                <Link
+                  href={`/student/subjects/${params.subjectId}/topics/${topic._id}`}
+                >
                   <CardHeader>
                     <CardTitle className="flex items-center group-hover:text-primary transition-colors">
                       <FileText className="mr-2 h-5 w-5" />
@@ -122,4 +138,3 @@ export default function StudentSubjectDetailPage({
     </div>
   );
 }
-

@@ -16,9 +16,9 @@ import { Textarea } from "@workspace/ui/components/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface CreateTopicDialogProps {
   open: boolean;
@@ -26,7 +26,11 @@ interface CreateTopicDialogProps {
   subjectId: Id<"subjects">;
 }
 
-export function CreateTopicDialog({ open, onOpenChange, subjectId }: CreateTopicDialogProps) {
+export function CreateTopicDialog({
+  open,
+  onOpenChange,
+  subjectId,
+}: CreateTopicDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -37,7 +41,7 @@ export function CreateTopicDialog({ open, onOpenChange, subjectId }: CreateTopic
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user?._id) {
       toast.error("Usuario no encontrado");
       return;
@@ -52,15 +56,15 @@ export function CreateTopicDialog({ open, onOpenChange, subjectId }: CreateTopic
         description: formData.description || undefined,
         teacherId: user._id,
       });
-      
+
       toast.success("Tema creado exitosamente");
-      
+
       // Reset form
       setFormData({
         name: "",
         description: "",
       });
-      
+
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating topic:", error);
@@ -136,4 +140,3 @@ export function CreateTopicDialog({ open, onOpenChange, subjectId }: CreateTopic
     </Dialog>
   );
 }
-

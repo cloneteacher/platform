@@ -12,7 +12,7 @@ import {
 } from "@workspace/ui/components/table";
 import { FileText, Download, Trash2, Upload } from "lucide-react";
 import { useMutation } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { toast } from "react-hot-toast";
 import {
   Dialog,
@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface FilesListProps {
   files: Array<{
@@ -37,7 +37,9 @@ interface FilesListProps {
 
 export function FilesList({ files, topicId }: FilesListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [fileToDelete, setFileToDelete] = useState<Id<"topicFiles"> | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<Id<"topicFiles"> | null>(
+    null
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const removeFile = useMutation(api.files.remove);
 
@@ -68,7 +70,7 @@ export function FilesList({ files, topicId }: FilesListProps) {
       toast.error("URL del archivo no disponible");
       return;
     }
-    
+
     // Open in new tab for download
     window.open(url, "_blank");
   };
@@ -158,7 +160,8 @@ export function FilesList({ files, topicId }: FilesListProps) {
           <DialogHeader>
             <DialogTitle>¿Eliminar archivo?</DialogTitle>
             <DialogDescription>
-              Esta acción no se puede deshacer. El archivo será eliminado permanentemente.
+              Esta acción no se puede deshacer. El archivo será eliminado
+              permanentemente.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -182,4 +185,3 @@ export function FilesList({ files, topicId }: FilesListProps) {
     </>
   );
 }
-

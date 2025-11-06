@@ -1,9 +1,9 @@
 import { useQuery } from "convex/react";
-import { api } from "../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 
 export function useCurrentUser() {
   const user = useQuery(api.users.getCurrentUser);
-  
+
   return {
     user,
     isLoading: user === undefined,
@@ -12,4 +12,3 @@ export function useCurrentUser() {
     isStudent: user?.role === "student",
   };
 }
-

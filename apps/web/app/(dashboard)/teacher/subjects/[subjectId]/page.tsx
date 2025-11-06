@@ -2,18 +2,32 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { Plus, ArrowLeft, FileText, Layers } from "lucide-react";
 import Link from "next/link";
-import { Id } from "../../../../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 import { CreateTopicDialog } from "@/components/teacher/create-topic-dialog";
 
-export default function SubjectDetailPage({ params }: { params: { subjectId: Id<"subjects"> } }) {
+export default function SubjectDetailPage({
+  params,
+}: {
+  params: { subjectId: Id<"subjects"> };
+}) {
   const [isCreateTopicOpen, setIsCreateTopicOpen] = useState(false);
-  const subject = useQuery(api.subjects.getById, { subjectId: params.subjectId });
-  const topics = useQuery(api.topics.getBySubject, { subjectId: params.subjectId });
+  const subject = useQuery(api.subjects.getById, {
+    subjectId: params.subjectId,
+  });
+  const topics = useQuery(api.topics.getBySubject, {
+    subjectId: params.subjectId,
+  });
 
   if (subject === undefined || topics === undefined) {
     return (
@@ -73,7 +87,9 @@ export default function SubjectDetailPage({ params }: { params: { subjectId: Id<
             <Layers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{topics.length}</div>
+            <div className="text-2xl font-bold text-primary">
+              {topics.length}
+            </div>
             <p className="text-xs text-muted-foreground">Temas creados</p>
           </CardContent>
         </Card>
@@ -105,7 +121,9 @@ export default function SubjectDetailPage({ params }: { params: { subjectId: Id<
                 key={topic._id}
                 className="hover:shadow-md transition-shadow cursor-pointer group"
               >
-                <Link href={`/teacher/subjects/${params.subjectId}/topics/${topic._id}`}>
+                <Link
+                  href={`/teacher/subjects/${params.subjectId}/topics/${topic._id}`}
+                >
                   <CardHeader>
                     <CardTitle className="flex items-center group-hover:text-primary transition-colors">
                       <FileText className="mr-2 h-5 w-5" />
@@ -138,4 +156,3 @@ export default function SubjectDetailPage({ params }: { params: { subjectId: Id<
     </div>
   );
 }
-

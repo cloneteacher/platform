@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { useQuery } from "convex/react";
-import { api } from "../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
 import { Plus, BookOpen, FolderOpen } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -23,7 +29,9 @@ export default function SubjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Mis Asignaturas</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Mis Asignaturas
+          </h1>
           <p className="text-muted-foreground mt-2">
             Gestiona tus asignaturas y temas
           </p>
@@ -104,4 +112,3 @@ export default function SubjectsPage() {
     </div>
   );
 }
-

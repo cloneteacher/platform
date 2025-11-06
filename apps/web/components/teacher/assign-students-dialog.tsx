@@ -22,20 +22,27 @@ import { Checkbox } from "@workspace/ui/components/checkbox";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "../../../packages/backend/convex/_generated/api";
+import { api } from "@workspace/backend/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Id } from "../../../packages/backend/convex/_generated/dataModel";
+import { Id } from "@workspace/backend/_generated/dataModel";
 
 interface AssignStudentsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialogProps) {
+export function AssignStudentsDialog({
+  open,
+  onOpenChange,
+}: AssignStudentsDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedSubjectId, setSelectedSubjectId] = useState<Id<"subjects"> | "">("");
-  const [selectedStudentIds, setSelectedStudentIds] = useState<Set<Id<"users">>>(new Set());
-  
+  const [selectedSubjectId, setSelectedSubjectId] = useState<
+    Id<"subjects"> | ""
+  >("");
+  const [selectedStudentIds, setSelectedStudentIds] = useState<
+    Set<Id<"users">>
+  >(new Set());
+
   const { user } = useCurrentUser();
   const subjects = useQuery(
     api.subjects.getByTeacher,
@@ -56,7 +63,7 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user?._id) {
       toast.error("Usuario no encontrado");
       return;
@@ -87,13 +94,15 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
       if (enrolled > 0) {
         toast.success(
           `${enrolled} estudiante(s) asignado(s) exitosamente${
-            alreadyEnrolled > 0 ? `. ${alreadyEnrolled} ya estaban asignados` : ""
+            alreadyEnrolled > 0
+              ? `. ${alreadyEnrolled} ya estaban asignados`
+              : ""
           }`
         );
       } else {
         toast.info("Todos los estudiantes ya estaban asignados");
       }
-      
+
       // Reset
       setSelectedSubjectId("");
       setSelectedStudentIds(new Set());
@@ -123,7 +132,9 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
               <Label htmlFor="subject">Asignatura</Label>
               <Select
                 value={selectedSubjectId}
-                onValueChange={(value) => setSelectedSubjectId(value as Id<"subjects">)}
+                onValueChange={(value) =>
+                  setSelectedSubjectId(value as Id<"subjects">)
+                }
                 disabled={isLoading}
               >
                 <SelectTrigger id="subject">
@@ -141,7 +152,9 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
 
             {/* Select Students */}
             <div className="space-y-2">
-              <Label>Estudiantes ({selectedStudentIds.size} seleccionados)</Label>
+              <Label>
+                Estudiantes ({selectedStudentIds.size} seleccionados)
+              </Label>
               <div className="border rounded-lg p-4 max-h-64 overflow-y-auto space-y-3">
                 {students === undefined ? (
                   <p className="text-sm text-muted-foreground">Cargando...</p>
@@ -151,7 +164,10 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
                   </p>
                 ) : (
                   students.map((student) => (
-                    <div key={student._id} className="flex items-center space-x-3">
+                    <div
+                      key={student._id}
+                      className="flex items-center space-x-3"
+                    >
                       <Checkbox
                         id={student._id}
                         checked={selectedStudentIds.has(student._id)}
@@ -183,7 +199,12 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading || !selectedSubjectId || selectedStudentIds.size === 0}>
+            <Button
+              type="submit"
+              disabled={
+                isLoading || !selectedSubjectId || selectedStudentIds.size === 0
+              }
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -199,4 +220,3 @@ export function AssignStudentsDialog({ open, onOpenChange }: AssignStudentsDialo
     </Dialog>
   );
 }
-

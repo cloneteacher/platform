@@ -1,8 +1,14 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../packages/backend/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { api } from "@workspace/backend/_generated/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { BookOpen, FolderOpen } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
@@ -85,4 +91,3 @@ export default function StudentSubjectsPage() {
     </div>
   );
 }
-
