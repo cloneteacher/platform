@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import {
@@ -19,14 +19,15 @@ import { CreateTopicDialog } from "@/components/teacher/create-topic-dialog";
 export default function SubjectDetailPage({
   params,
 }: {
-  params: { subjectId: Id<"subjects"> };
+  params: Promise<{ subjectId: Id<"subjects"> }>;
 }) {
+  const { subjectId } = use(params);
   const [isCreateTopicOpen, setIsCreateTopicOpen] = useState(false);
   const subject = useQuery(api.subjects.getById, {
-    subjectId: params.subjectId,
+    subjectId,
   });
   const topics = useQuery(api.topics.getBySubject, {
-    subjectId: params.subjectId,
+    subjectId,
   });
 
   if (subject === undefined || topics === undefined) {
@@ -122,7 +123,7 @@ export default function SubjectDetailPage({
                 className="hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <Link
-                  href={`/teacher/subjects/${params.subjectId}/topics/${topic._id}`}
+                  href={`/teacher/subjects/${subjectId}/topics/${topic._id}`}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center group-hover:text-primary transition-colors">
@@ -151,7 +152,7 @@ export default function SubjectDetailPage({
       <CreateTopicDialog
         open={isCreateTopicOpen}
         onOpenChange={setIsCreateTopicOpen}
-        subjectId={params.subjectId}
+        subjectId={subjectId}
       />
     </div>
   );

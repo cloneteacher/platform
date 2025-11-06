@@ -32,7 +32,10 @@ export default clerkMiddleware(async (auth, request) => {
 
   // Role-based route protection
   if (userId) {
-    const role = sessionClaims?.metadata?.role || sessionClaims?.publicMetadata?.role || "student";
+    const role =
+      (sessionClaims?.metadata as { role?: string })?.role ||
+      (sessionClaims?.publicMetadata as { role?: string })?.role ||
+      "student";
 
     // Admin routes - only accessible by admin
     if (isAdminRoute(request) && role !== "admin") {

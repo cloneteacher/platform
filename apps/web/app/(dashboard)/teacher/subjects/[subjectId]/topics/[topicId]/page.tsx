@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import {
@@ -20,11 +20,12 @@ import { FilesList } from "@/components/teacher/files-list";
 export default function TopicDetailPage({
   params,
 }: {
-  params: { subjectId: Id<"subjects">; topicId: Id<"topics"> };
+  params: Promise<{ subjectId: Id<"subjects">; topicId: Id<"topics"> }>;
 }) {
+  const { subjectId, topicId } = use(params);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const topic = useQuery(api.topics.getById, { topicId: params.topicId });
-  const files = useQuery(api.files.getByTopic, { topicId: params.topicId });
+  const topic = useQuery(api.topics.getById, { topicId });
+  const files = useQuery(api.files.getByTopic, { topicId });
 
   if (topic === undefined || files === undefined) {
     return (
@@ -43,7 +44,7 @@ export default function TopicDetailPage({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">Tema no encontrado</p>
-            <Link href={`/teacher/subjects/${params.subjectId}`}>
+            <Link href={`/teacher/subjects/${subjectId}`}>
               <Button variant="outline" className="mt-4">
                 Volver a la Asignatura
               </Button>
@@ -59,7 +60,7 @@ export default function TopicDetailPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Link href={`/teacher/subjects/${params.subjectId}`}>
+          <Link href={`/teacher/subjects/${subjectId}`}>
             <Button variant="ghost" size="sm" className="mb-2">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Volver a la Asignatura
@@ -101,7 +102,7 @@ export default function TopicDetailPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FilesList files={files} topicId={params.topicId} />
+          <FilesList files={files} topicId={topicId} />
         </CardContent>
       </Card>
 
@@ -109,8 +110,8 @@ export default function TopicDetailPage({
       <FileUploadDialog
         open={isUploadDialogOpen}
         onOpenChange={setIsUploadDialogOpen}
-        topicId={params.topicId}
-        subjectId={params.subjectId}
+        topicId={topicId}
+        subjectId={subjectId}
       />
     </div>
   );

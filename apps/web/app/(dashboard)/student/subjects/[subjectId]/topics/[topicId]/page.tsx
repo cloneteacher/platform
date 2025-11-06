@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { Card, CardContent } from "@workspace/ui/components/card";
@@ -20,9 +21,10 @@ import { ExamInterface } from "@/components/student/exam-interface";
 export default function StudentTopicDetailPage({
   params,
 }: {
-  params: { subjectId: Id<"subjects">; topicId: Id<"topics"> };
+  params: Promise<{ subjectId: Id<"subjects">; topicId: Id<"topics"> }>;
 }) {
-  const topic = useQuery(api.topics.getById, { topicId: params.topicId });
+  const { subjectId, topicId } = use(params);
+  const topic = useQuery(api.topics.getById, { topicId });
 
   if (topic === undefined) {
     return (
@@ -41,7 +43,7 @@ export default function StudentTopicDetailPage({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">Tema no encontrado</p>
-            <Link href={`/student/subjects/${params.subjectId}`}>
+            <Link href={`/student/subjects/${subjectId}`}>
               <Button variant="outline" className="mt-4">
                 Volver a la Asignatura
               </Button>
@@ -56,7 +58,7 @@ export default function StudentTopicDetailPage({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <Link href={`/student/subjects/${params.subjectId}`}>
+        <Link href={`/student/subjects/${subjectId}`}>
           <Button variant="ghost" size="sm" className="mb-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver a la Asignatura
@@ -79,7 +81,7 @@ export default function StudentTopicDetailPage({
         <TabsContent value="chat" className="space-y-4">
           <Card>
             <CardContent className="p-0">
-              <ChatInterface topicId={params.topicId} />
+              <ChatInterface topicId={topicId} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -87,7 +89,7 @@ export default function StudentTopicDetailPage({
         <TabsContent value="materials" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <TopicMaterials topicId={params.topicId} />
+              <TopicMaterials topicId={topicId} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -95,10 +97,7 @@ export default function StudentTopicDetailPage({
         <TabsContent value="exams" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <ExamInterface
-                topicId={params.topicId}
-                subjectId={params.subjectId}
-              />
+              <ExamInterface topicId={topicId} />
             </CardContent>
           </Card>
         </TabsContent>

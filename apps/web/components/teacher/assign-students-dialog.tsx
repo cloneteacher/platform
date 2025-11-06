@@ -100,7 +100,7 @@ export function AssignStudentsDialog({
           }`
         );
       } else {
-        toast.info("Todos los estudiantes ya estaban asignados");
+        toast.success("Todos los estudiantes ya estaban asignados");
       }
 
       // Reset

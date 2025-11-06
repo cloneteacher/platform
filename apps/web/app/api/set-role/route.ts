@@ -16,7 +16,8 @@ export async function POST(request: Request) {
     }
 
     // Set public metadata in Clerk
-    await clerkClient().users.updateUserMetadata(userId, {
+    const client = await clerkClient();
+    await client.users.updateUserMetadata(userId, {
       publicMetadata: {
         role: role,
       },

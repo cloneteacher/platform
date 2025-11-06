@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import {
@@ -17,13 +18,14 @@ import { Id } from "@workspace/backend/_generated/dataModel";
 export default function StudentSubjectDetailPage({
   params,
 }: {
-  params: { subjectId: Id<"subjects"> };
+  params: Promise<{ subjectId: Id<"subjects"> }>;
 }) {
+  const { subjectId } = use(params);
   const subject = useQuery(api.subjects.getById, {
-    subjectId: params.subjectId,
+    subjectId,
   });
   const topics = useQuery(api.topics.getBySubject, {
-    subjectId: params.subjectId,
+    subjectId,
   });
 
   if (subject === undefined || topics === undefined) {
@@ -111,7 +113,7 @@ export default function StudentSubjectDetailPage({
                 className="hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <Link
-                  href={`/student/subjects/${params.subjectId}/topics/${topic._id}`}
+                  href={`/student/subjects/${subjectId}/topics/${topic._id}`}
                 >
                   <CardHeader>
                     <CardTitle className="flex items-center group-hover:text-primary transition-colors">
