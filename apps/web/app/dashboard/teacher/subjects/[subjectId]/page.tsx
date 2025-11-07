@@ -15,6 +15,8 @@ import { Plus, ArrowLeft, FileText, Layers } from "lucide-react";
 import Link from "next/link";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { CreateTopicDialog } from "@/components/teacher/create-topic-dialog";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 
 export default function SubjectDetailPage({
   params,
@@ -23,12 +25,20 @@ export default function SubjectDetailPage({
 }) {
   const { subjectId } = use(params);
   const [isCreateTopicOpen, setIsCreateTopicOpen] = useState(false);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["teacher", "admin"],
+  });
   const subject = useQuery(api.subjects.getById, {
     subjectId,
   });
   const topics = useQuery(api.topics.getBySubject, {
     subjectId,
   });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   if (subject === undefined || topics === undefined) {
     return (

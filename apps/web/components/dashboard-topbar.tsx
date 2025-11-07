@@ -11,7 +11,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog";
-import { Menu, X, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronDown,
+  Settings,
+} from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   Avatar,
@@ -19,6 +27,13 @@ import {
   AvatarFallback,
 } from "@workspace/ui/components/avatar";
 import { UserProfilePanel } from "@/components/user-profile-panel";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu";
 
 interface DashboardTopbarProps {
   onMenuClick: () => void;
@@ -88,68 +103,54 @@ export function DashboardTopbar({
       </div>
 
       {/* Right side */}
-      <div className="flex items-center space-x-4">
-        {/* User info - Desktop */}
+      <div className="flex items-center space-x-2 md:space-x-3">
         {user && (
-          <div className="hidden md:flex items-center space-x-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-foreground">
-                {user.firstName} {user.lastName}
-              </p>
-            </div>
-            <button
-              onClick={() => setShowProfilePanel(true)}
-              className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full"
-              aria-label="Abrir panel de perfil"
-            >
-              <Avatar className="h-9 w-9">
-                {clerkUser?.imageUrl && (
-                  <AvatarImage
-                    src={clerkUser.imageUrl}
-                    alt={`${user.firstName} ${user.lastName}`}
-                  />
-                )}
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {getInitials()}
-                </AvatarFallback>
-              </Avatar>
-            </button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-3 rounded-full border border-border/60 bg-background px-3 py-1 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label="Abrir menú de cuenta"
+              >
+                <div className="hidden md:flex flex-col items-end leading-tight">
+                  <span className="text-sm font-medium text-foreground">
+                    {user.firstName} {user.lastName}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 md:h-9 md:w-9">
+                    {clerkUser?.imageUrl && (
+                      <AvatarImage
+                        src={clerkUser.imageUrl}
+                        alt={`${user.firstName} ${user.lastName}`}
+                      />
+                    )}
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onSelect={() => setShowProfilePanel(true)}
+                className="cursor-pointer"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Ajustes
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => setShowLogoutModal(true)}
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar Sesión"}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
-
-        {/* User avatar - Mobile */}
-        {user && (
-          <button
-            onClick={() => setShowProfilePanel(true)}
-            className="md:hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full"
-            aria-label="Abrir panel de perfil"
-          >
-            <Avatar className="h-8 w-8">
-              {clerkUser?.imageUrl && (
-                <AvatarImage
-                  src={clerkUser.imageUrl}
-                  alt={`${user.firstName} ${user.lastName}`}
-                />
-              )}
-              <AvatarFallback className="bg-primary text-primary-foreground">
-                {getInitials()}
-              </AvatarFallback>
-            </Avatar>
-          </button>
-        )}
-
-        {/* Logout button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowLogoutModal(true)}
-          disabled={isLoggingOut}
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          <span className="hidden sm:inline">
-            {isLoggingOut ? "Cerrando..." : "Cerrar Sesión"}
-          </span>
-        </Button>
       </div>
 
       {/* Logout confirmation modal */}

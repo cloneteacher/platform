@@ -14,6 +14,8 @@ import { Button } from "@workspace/ui/components/button";
 import { ArrowLeft, FileText, Layers } from "lucide-react";
 import Link from "next/link";
 import { Id } from "@workspace/backend/_generated/dataModel";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 
 export default function StudentSubjectDetailPage({
   params,
@@ -21,12 +23,20 @@ export default function StudentSubjectDetailPage({
   params: Promise<{ subjectId: Id<"subjects"> }>;
 }) {
   const { subjectId } = use(params);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["student"],
+  });
   const subject = useQuery(api.subjects.getById, {
     subjectId,
   });
   const topics = useQuery(api.topics.getBySubject, {
     subjectId,
   });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   if (subject === undefined || topics === undefined) {
     return (

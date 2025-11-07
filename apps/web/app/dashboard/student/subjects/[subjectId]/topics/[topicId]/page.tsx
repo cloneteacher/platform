@@ -17,6 +17,8 @@ import {
 import { ChatInterface } from "@/components/student/chat-interface";
 import { TopicMaterials } from "@/components/student/topic-materials";
 import { ExamInterface } from "@/components/student/exam-interface";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 
 export default function StudentTopicDetailPage({
   params,
@@ -24,7 +26,15 @@ export default function StudentTopicDetailPage({
   params: Promise<{ subjectId: Id<"subjects">; topicId: Id<"topics"> }>;
 }) {
   const { subjectId, topicId } = use(params);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["student"],
+  });
   const topic = useQuery(api.topics.getById, { topicId });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   if (topic === undefined) {
     return (

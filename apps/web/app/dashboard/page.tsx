@@ -1,9 +1,22 @@
 "use client";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import { Button } from "@workspace/ui/components/button";
-import { Users, BookOpen, GraduationCap, UserCog, Plus, ArrowRight } from "lucide-react";
+import {
+  Users,
+  BookOpen,
+  GraduationCap,
+  UserCog,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
@@ -51,7 +64,9 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard de Administrador</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            Dashboard de Administrador
+          </h1>
           <p className="text-muted-foreground mt-2">
             Gestiona profesores y visualiza estadísticas del sistema
           </p>
@@ -65,8 +80,12 @@ export default function DashboardPage() {
               <UserCog className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats?.totalTeachers || 0}</div>
-              <p className="text-xs text-muted-foreground">Registrados en el sistema</p>
+              <div className="text-2xl font-bold text-primary">
+                {stats?.totalTeachers || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Registrados en el sistema
+              </p>
             </CardContent>
           </Card>
 
@@ -76,8 +95,12 @@ export default function DashboardPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats?.totalStudents || 0}</div>
-              <p className="text-xs text-muted-foreground">Activos en el sistema</p>
+              <div className="text-2xl font-bold text-primary">
+                {stats?.totalStudents || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Activos en el sistema
+              </p>
             </CardContent>
           </Card>
 
@@ -87,8 +110,12 @@ export default function DashboardPage() {
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats?.totalSubjects || 0}</div>
-              <p className="text-xs text-muted-foreground">Creadas por profesores</p>
+              <div className="text-2xl font-bold text-primary">
+                {stats?.totalSubjects || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Creadas por profesores
+              </p>
             </CardContent>
           </Card>
 
@@ -98,8 +125,12 @@ export default function DashboardPage() {
               <GraduationCap className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats?.totalTopics || 0}</div>
-              <p className="text-xs text-muted-foreground">Contenido disponible</p>
+              <div className="text-2xl font-bold text-primary">
+                {stats?.totalTopics || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Contenido disponible
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -195,7 +226,10 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <Link href="/dashboard/teacher/subjects">
-                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                <Button
+                  variant="outline"
+                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
                   Crear Ahora
                   <ArrowRight className="ml-auto h-4 w-4" />
                 </Button>
@@ -265,4 +299,3 @@ export default function DashboardPage() {
 
   return null;
 }
-

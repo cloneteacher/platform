@@ -13,12 +13,22 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { Plus, BookOpen, FolderOpen } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRoleGuard } from "@/hooks/use-role-guard";
 import { CreateSubjectDialog } from "@/components/teacher/create-subject-dialog";
+import { LoadingScreen } from "@/components/loading";
 import Link from "next/link";
 
 export default function SubjectsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const { user } = useCurrentUser();
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["teacher", "admin"],
+  });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
   const subjects = useQuery(
     api.subjects.getByTeacher,
     user?._id ? { teacherId: user._id } : "skip"

@@ -132,7 +132,11 @@ export function DashboardSidebar({
           {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === item.href
+                  : pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
               const Icon = item.icon;
               return (
                 <Link

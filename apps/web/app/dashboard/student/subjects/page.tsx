@@ -11,10 +11,20 @@ import {
 } from "@workspace/ui/components/card";
 import { BookOpen, FolderOpen } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 import Link from "next/link";
 
 export default function StudentSubjectsPage() {
   const { user } = useCurrentUser();
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["student"],
+  });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
   const enrollments = useQuery(
     api.enrollments.getByStudent,
     user?._id ? { userId: user._id } : "skip"

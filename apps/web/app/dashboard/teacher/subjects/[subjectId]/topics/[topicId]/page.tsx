@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { FileUploadDialog } from "@/components/teacher/file-upload-dialog";
 import { FilesList } from "@/components/teacher/files-list";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 
 export default function TopicDetailPage({
   params,
@@ -24,8 +26,16 @@ export default function TopicDetailPage({
 }) {
   const { subjectId, topicId } = use(params);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["teacher", "admin"],
+  });
   const topic = useQuery(api.topics.getById, { topicId });
   const files = useQuery(api.files.getByTopic, { topicId });
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   if (topic === undefined || files === undefined) {
     return (

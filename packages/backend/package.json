@@ -10,17 +10,21 @@
     "./convex": "./convex/*.ts"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^24.10.0",
     "@workspace/typescript-config": "workspace:*",
-    "typescript": "latest"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@clerk/backend": "^2.9.2",
-    "@convex-dev/agent": "^0.2.1",
+    "@ai-sdk/openai": "^2.0.63",
+    "@clerk/backend": "^2.20.0",
+    "@convex-dev/agent": "^0.2.12",
     "@convex-dev/auth": "^0.0.90",
+    "@convex-dev/rag": "^0.5.4",
     "@openrouter/ai-sdk-provider": "^1.2.0",
-    "ai": "^5.0.17",
-    "convex": "^1.25.4",
-    "svix": "^1.79.0"
+    "ai": "^5.0.88",
+    "convex": "^1.28.2",
+    "mammoth": "^1.11.0",
+    "pdf-parse-new": "^1.2.0",
+    "svix": "^1.81.0"
   }
 }

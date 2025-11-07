@@ -13,6 +13,8 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { Plus, UserCog, Mail } from "lucide-react";
 import { CreateTeacherDialog } from "@/components/admin/create-teacher-dialog";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 import {
   Table,
   TableBody,
@@ -24,7 +26,15 @@ import {
 
 export default function TeachersPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["admin"],
+  });
   const teachers = useQuery(api.admin.getAllTeachers);
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   return (
     <div className="space-y-6">

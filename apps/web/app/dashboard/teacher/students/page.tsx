@@ -21,10 +21,20 @@ import {
   TableRow,
 } from "@workspace/ui/components/table";
 import { AssignStudentsDialog } from "@/components/teacher/assign-students-dialog";
+import { useRoleGuard } from "@/hooks/use-role-guard";
+import { LoadingScreen } from "@/components/loading";
 
 export default function StudentsPage() {
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const { isLoading: isCheckingRole, hasAccess } = useRoleGuard({
+    allowedRoles: ["teacher", "admin"],
+  });
   const students = useQuery(api.admin.getAllStudents);
+
+  // Show loading while checking role
+  if (isCheckingRole || !hasAccess) {
+    return <LoadingScreen message="Verificando permisos..." />;
+  }
 
   return (
     <div className="space-y-6">
