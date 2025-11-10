@@ -59,7 +59,6 @@ export const createTeacher = internalMutation({
       email: args.email,
       firstName: args.firstName,
       lastName: args.lastName,
-      name: `${args.firstName} ${args.lastName}`,
       role: "teacher",
     });
   },
@@ -90,4 +89,3 @@ export const getStats = query({
     };
   },
 });
-

@@ -10,6 +10,7 @@ import {
   BookOpen,
   GraduationCap,
   UserCog,
+  FileQuestion,
 } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
@@ -73,6 +74,11 @@ export function DashboardSidebar({
           name: "Mis Asignaturas",
           href: "/dashboard/student/subjects",
           icon: GraduationCap,
+        },
+        {
+          name: "Mis Exámenes",
+          href: "/dashboard/student/exams",
+          icon: FileQuestion,
         },
       ];
     }

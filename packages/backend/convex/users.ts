@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, internalQuery, mutation } from "./_generated/server.js";
+import { deriveUserNames } from "./utils/names.js";
 
 // Query to get the current user
 export const getCurrentUser = query({
@@ -34,13 +35,13 @@ export const syncCurrentUser = mutation({
 
     const clerkId = identity.subject;
     const email = identity.email || "";
-    const firstName =
-      typeof identity.firstName === "string" ? identity.firstName : "";
-    const lastName =
-      typeof identity.lastName === "string" ? identity.lastName : "";
-    const name =
-      identity.name ||
-      (firstName && lastName ? `${firstName} ${lastName}` : undefined);
+    const { firstName, lastName } = deriveUserNames({
+      firstName: identity.firstName,
+      lastName: identity.lastName,
+      fullName: identity.name,
+      username: identity.username,
+      email,
+    });
 
     // Check if user already exists
     const existingUser = await ctx.db
@@ -54,7 +55,6 @@ export const syncCurrentUser = mutation({
         email,
         firstName,
         lastName,
-        name,
       });
       return existingUser._id;
     } else {
@@ -64,7 +64,6 @@ export const syncCurrentUser = mutation({
         email,
         firstName,
         lastName,
-        name,
         role: "student",
       });
       return userId;
@@ -97,16 +96,9 @@ export const updateProfile = mutation({
       throw new Error("User not found");
     }
 
-    // Update user profile
-    const name =
-      args.firstName && args.lastName
-        ? `${args.firstName} ${args.lastName}`
-        : undefined;
-
     await ctx.db.patch(user._id, {
       firstName: args.firstName,
       lastName: args.lastName,
-      name,
     });
 
     return { success: true };

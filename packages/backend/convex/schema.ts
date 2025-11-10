@@ -6,7 +6,6 @@ export default defineSchema({
     email: v.string(),
     firstName: v.string(),
     lastName: v.string(),
-    name: v.optional(v.string()),
     clerkId: v.string(), // ID de Clerk para la relación
     role: v.union(
       v.literal("admin"),

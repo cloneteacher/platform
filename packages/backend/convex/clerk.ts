@@ -3,6 +3,7 @@ import { internal } from "./_generated/api.js";
 import { Webhook } from "svix";
 import { internalMutation } from "./_generated/server.js";
 import { v } from "convex/values";
+import { deriveUserNames } from "./utils/names.js";
 
 // HTTP action to handle Clerk webhooks
 export const webhook = httpAction(async (ctx, request) => {
@@ -51,17 +52,24 @@ export const webhook = httpAction(async (ctx, request) => {
     // Extract user information
     const clerkId = userData.id;
     const email = userData.email_addresses?.[0]?.email_address || "";
-    const firstName = userData.first_name || "";
-    const lastName = userData.last_name || "";
-    const name =
-      firstName && lastName
-        ? `${firstName} ${lastName}`
-        : firstName || lastName || undefined;
+    const { firstName, lastName } = deriveUserNames({
+      firstName: userData.first_name,
+      lastName: userData.last_name,
+      fullName: userData.full_name,
+      username: userData.username,
+      email,
+    });
 
     // Extract role from public metadata (set during sign-up or admin creation)
     const role = userData.public_metadata?.role || "student";
 
-    console.log("Processing user:", { clerkId, email, firstName, lastName, role });
+    console.log("Processing user:", {
+      clerkId,
+      email,
+      firstName,
+      lastName,
+      role,
+    });
 
     try {
       // Call internal mutation to sync user
@@ -70,7 +78,6 @@ export const webhook = httpAction(async (ctx, request) => {
         email,
         firstName,
         lastName,
-        name,
         role,
       });
       console.log("User synced successfully");
@@ -90,8 +97,11 @@ export const syncUser = internalMutation({
     email: v.string(),
     firstName: v.string(),
     lastName: v.string(),
-    name: v.optional(v.string()),
-    role: v.union(v.literal("admin"), v.literal("teacher"), v.literal("student")),
+    role: v.union(
+      v.literal("admin"),
+      v.literal("teacher"),
+      v.literal("student")
+    ),
   },
   handler: async (ctx, args) => {
     console.log("Syncing user:", args);
@@ -109,7 +119,6 @@ export const syncUser = internalMutation({
         email: args.email,
         firstName: args.firstName,
         lastName: args.lastName,
-        name: args.name,
         role: args.role,
       });
     } else {
@@ -120,7 +129,6 @@ export const syncUser = internalMutation({
         email: args.email,
         firstName: args.firstName,
         lastName: args.lastName,
-        name: args.name,
         role: args.role,
       });
       console.log("User created with ID:", userId);

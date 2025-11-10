@@ -107,7 +107,7 @@ export default function StudentTopicDetailPage({
         <TabsContent value="exams" className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <ExamInterface topicId={topicId} />
+              <ExamInterface topicId={topicId} subjectId={subjectId} />
             </CardContent>
           </Card>
         </TabsContent>

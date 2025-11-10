@@ -12,6 +12,7 @@ import type * as admin from "../admin.js";
 import type * as chat from "../chat.js";
 import type * as clerk from "../clerk.js";
 import type * as enrollments from "../enrollments.js";
+import type * as examActions from "../examActions.js";
 import type * as fileIndexing from "../fileIndexing.js";
 import type * as fileQueries from "../fileQueries.js";
 import type * as files from "../files.js";
@@ -20,6 +21,7 @@ import type * as rag from "../rag.js";
 import type * as subjects from "../subjects.js";
 import type * as topics from "../topics.js";
 import type * as users from "../users.js";
+import type * as utils_names from "../utils/names.js";
 
 import type {
   ApiFromModules,
@@ -40,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   chat: typeof chat;
   clerk: typeof clerk;
   enrollments: typeof enrollments;
+  examActions: typeof examActions;
   fileIndexing: typeof fileIndexing;
   fileQueries: typeof fileQueries;
   files: typeof files;
@@ -48,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   subjects: typeof subjects;
   topics: typeof topics;
   users: typeof users;
+  "utils/names": typeof utils_names;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
