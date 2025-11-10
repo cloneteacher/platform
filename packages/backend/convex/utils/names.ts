@@ -27,7 +27,7 @@ export const deriveUserNames = (
   if ((!firstName || !lastName) && fullNameCandidate) {
     const parts = fullNameCandidate.split(/\s+/).filter(Boolean);
     if (!firstName && parts.length > 0) {
-      firstName = parts[0];
+      firstName = parts[0] || "";
     }
     if (!lastName && parts.length > 1) {
       lastName = parts.slice(1).join(" ");
@@ -37,13 +37,13 @@ export const deriveUserNames = (
   if (!firstName || !lastName) {
     const email = normalize(raw.email);
     if (email) {
-      const localPart = email.split("@")[0];
+      const localPart = email.split("@")[0] || "";
       const emailParts = localPart.split(/[._-]+/).filter(Boolean);
       if (!firstName && emailParts.length > 0) {
-        firstName = capitalizeWord(emailParts[0]);
+        firstName = capitalizeWord(emailParts[0] || "");
       }
       if (!lastName && emailParts.length > 1) {
-        lastName = capitalizeWord(emailParts[emailParts.length - 1]);
+        lastName = capitalizeWord(emailParts[emailParts.length - 1] || "");
       }
     }
   }

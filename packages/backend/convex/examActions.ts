@@ -11,6 +11,7 @@ import { rag } from "./rag.js";
 import { generateText } from "ai";
 import { internal } from "./_generated/api.js";
 import type { ActionCtx } from "./_generated/server.js";
+import type { RegisteredAction } from "convex/server";
 
 type ExamQuestion = {
   type: "multiple_choice" | "true_false" | "short_answer" | "essay";
@@ -48,11 +49,11 @@ const examAnswerValidator = v.object({
 /**
  * Action to generate an exam with 10 multiple choice questions based on RAG content
  */
-interface GenerateExamArgs {
+type GenerateExamArgs = {
   topicId: Id<"topics">;
   subjectId: Id<"subjects">;
   userId: Id<"users">;
-}
+} & Record<string, unknown>;
 
 type GenerateExamResult = {
   examId: Id<"exams">;
@@ -61,7 +62,11 @@ type GenerateExamResult = {
   entriesFound: number;
 };
 
-export const generateExam = action({
+export const generateExam: RegisteredAction<
+  "public",
+  GenerateExamArgs,
+  Promise<GenerateExamResult>
+> = action({
   args: {
     topicId: v.id("topics"),
     subjectId: v.id("subjects"),
@@ -194,10 +199,10 @@ Responde SOLO con el JSON array, sin texto adicional.`;
 /**
  * Action to submit exam answers and calculate score
  */
-interface SubmitExamAnswersArgs {
+type SubmitExamAnswersArgs = {
   examId: Id<"exams">;
   answers: ExamAnswer[];
-}
+} & Record<string, unknown>;
 
 type SubmitExamAnswersResult = {
   resultId: Id<"examResults">;
@@ -207,7 +212,11 @@ type SubmitExamAnswersResult = {
   percentage: number;
 };
 
-export const submitExamAnswers = action({
+export const submitExamAnswers: RegisteredAction<
+  "public",
+  SubmitExamAnswersArgs,
+  Promise<SubmitExamAnswersResult>
+> = action({
   args: {
     examId: v.id("exams"),
     answers: v.array(examAnswerValidator),
@@ -429,12 +438,16 @@ const normalizeAnswer = (value: NormalizableAnswer): string => {
   return "";
 };
 
-interface GetExamResultsArgs {
+type GetExamResultsArgs = {
   topicId: Id<"topics">;
   userId: Id<"users">;
-}
+} & Record<string, unknown>;
 
-export const getExamResults = action({
+export const getExamResults: RegisteredAction<
+  "public",
+  GetExamResultsArgs,
+  Promise<ExamResultEntry[]>
+> = action({
   args: {
     topicId: v.id("topics"),
     userId: v.id("users"),
@@ -455,19 +468,22 @@ export const getExamResults = action({
     // Get results for these exams
     const results: ExamResultEntry[] = [];
     for (const exam of exams) {
-      const examResults = await ctx.runQuery(
+      const examResults = (await ctx.runQuery(
         internal.examActions.getExamResultsByExamId,
         {
           examId: exam._id,
         }
-      );
+      )) as Doc<"examResults">[];
 
-      if (examResults.length > 0) {
-        results.push({
-          exam,
-          result: examResults[0], // Assuming one result per exam
-        });
+      const firstResult = examResults[0];
+      if (!firstResult) {
+        continue;
       }
+
+      results.push({
+        exam,
+        result: firstResult, // Assuming one result per exam
+      });
     }
 
     return results;
