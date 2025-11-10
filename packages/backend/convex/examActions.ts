@@ -72,11 +72,12 @@ export const generateExam = action({
     args: GenerateExamArgs
   ): Promise<GenerateExamResult> => {
     // Search RAG for relevant content in the topic namespace
+    // Use a more general query and lower threshold to ensure we find content
     const searchResult = await rag.search(ctx, {
       namespace: args.topicId as string,
-      query: "Generate educational questions about this topic content",
-      limit: 10,
-      vectorScoreThreshold: 0.3,
+      query: "educational content topic material",
+      limit: 20, // Increase limit to get more content
+      vectorScoreThreshold: 0.1, // Lower threshold to be more permissive
       filters: [
         {
           name: "topicId",
@@ -395,6 +396,12 @@ type StudentExamHistoryEntry = {
     completedAt: number;
   };
   questions: ExamReviewQuestion[];
+  student?: {
+    _id: Id<"users">;
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
 };
 
 const normalizeAnswer = (value: NormalizableAnswer): string => {
@@ -573,6 +580,129 @@ export const getStudentExamHistory = query({
           completedAt: result.completedAt,
         },
         questions: reviewQuestions,
+      });
+    }
+
+    return entries.sort((a, b) => b.result.completedAt - a.result.completedAt);
+  },
+});
+
+/**
+ * Query to get all exam results for a topic (for teachers)
+ */
+export const getExamResultsByTopic = query({
+  args: {
+    topicId: v.id("topics"),
+  },
+  handler: async (ctx, args): Promise<StudentExamHistoryEntry[]> => {
+    // Get all exam results for this topic
+    const examResults = await ctx.db
+      .query("examResults")
+      .withIndex("by_topic", (q) => q.eq("topicId", args.topicId))
+      .order("desc")
+      .collect();
+
+    const subjectCache = new Map<Id<"subjects">, Doc<"subjects"> | null>();
+    const topicCache = new Map<Id<"topics">, Doc<"topics"> | null>();
+    const userCache = new Map<Id<"users">, Doc<"users"> | null>();
+
+    const entries: StudentExamHistoryEntry[] = [];
+
+    for (const result of examResults) {
+      const exam = await ctx.db.get(result.examId);
+      if (!exam) {
+        continue;
+      }
+
+      let subject = subjectCache.get(exam.subjectId);
+      if (subject === undefined) {
+        subject = (await ctx.db.get(exam.subjectId)) as Doc<"subjects"> | null;
+        subjectCache.set(exam.subjectId, subject ?? null);
+      }
+
+      let topic = topicCache.get(exam.topicId);
+      if (topic === undefined) {
+        topic = (await ctx.db.get(exam.topicId)) as Doc<"topics"> | null;
+        topicCache.set(exam.topicId, topic ?? null);
+      }
+
+      let user = userCache.get(result.userId);
+      if (user === undefined) {
+        user = (await ctx.db.get(result.userId)) as Doc<"users"> | null;
+        userCache.set(result.userId, user ?? null);
+      }
+
+      const questions = Array.isArray(exam.questions)
+        ? (exam.questions as ExamQuestion[])
+        : [];
+
+      const answers = Array.isArray(result.answers)
+        ? (result.answers as ExamAnswer[])
+        : [];
+
+      const reviewQuestions = questions.map((question, index) => {
+        const studentAnswer = answers.find(
+          (answer) => answer.questionIndex === index
+        );
+
+        const studentValue = studentAnswer?.answer ?? null;
+        const isCorrect = studentAnswer
+          ? normalizeAnswer(studentAnswer.answer) ===
+            normalizeAnswer(question.correctAnswer as NormalizableAnswer)
+          : false;
+
+        return {
+          questionIndex: index,
+          question: question.question,
+          options: Array.isArray(question.options) ? question.options : [],
+          correctAnswer: question.correctAnswer,
+          studentAnswer: studentValue,
+          isCorrect,
+        } satisfies ExamReviewQuestion;
+      });
+
+      const score = Number(result.score ?? 0);
+      const totalQuestions = Number(result.totalQuestions ?? 0);
+      const percentage = Math.round(score);
+      const correctAnswers = Math.round((score / 100) * totalQuestions);
+
+      entries.push({
+        exam: {
+          _id: exam._id,
+          createdAt: exam.createdAt,
+          subjectId: exam.subjectId,
+          topicId: exam.topicId,
+        },
+        subject: subject
+          ? {
+              _id: subject._id,
+              name: subject.name,
+            }
+          : null,
+        topic: topic
+          ? {
+              _id: topic._id,
+              name: topic.name,
+            }
+          : null,
+        result: {
+          _id: result._id,
+          score,
+          totalQuestions,
+          percentage,
+          correctAnswers,
+          completedAt: result.completedAt,
+        },
+        questions: reviewQuestions,
+        // Add student info for teacher view
+        student: user
+          ? {
+              _id: user._id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+            }
+          : null,
       });
     }
 

@@ -41,6 +41,7 @@ export default defineSchema({
     fileType: v.string(), // e.g., "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     storageId: v.id("_storage"), // Referencia a Convex file storage
     uploadedAt: v.number(),
+    indexedAt: v.optional(v.number()), // Timestamp cuando se indexó en RAG
   })
     .index("by_topic", ["topicId"])
     .index("by_subject", ["subjectId"])

@@ -20,7 +20,10 @@ interface CreateTeacherDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogProps) {
+export function CreateTeacherDialog({
+  open,
+  onOpenChange,
+}: CreateTeacherDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,9 +40,9 @@ export function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogP
       // TODO: Implementar la creación del profesor usando la API de Clerk
       // Por ahora, simulamos un delay y mostramos un mensaje
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
+
       toast.success("Profesor creado exitosamente");
-      
+
       // Reset form
       setFormData({
         firstName: "",
@@ -47,7 +50,7 @@ export function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogP
         email: "",
         password: "",
       });
-      
+
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating teacher:", error);
@@ -63,12 +66,13 @@ export function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogP
         <DialogHeader>
           <DialogTitle>Crear Nuevo Profesor</DialogTitle>
           <DialogDescription>
-            Completa los datos del nuevo profesor. Se creará su cuenta automáticamente.
+            Completa los datos del nuevo profesor. Se creará su cuenta
+            automáticamente.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-4 px-6">
             <div className="space-y-2">
               <Label htmlFor="firstName">Nombre</Label>
               <Input
@@ -157,4 +161,3 @@ export function CreateTeacherDialog({ open, onOpenChange }: CreateTeacherDialogP
     </Dialog>
   );
 }
-

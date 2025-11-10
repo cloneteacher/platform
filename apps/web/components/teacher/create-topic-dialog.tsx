@@ -85,7 +85,7 @@ export function CreateTopicDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-4 px-6">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre del Tema</Label>
               <Input

@@ -126,7 +126,7 @@ export function AssignStudentsDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-4 px-6">
             {/* Select Subject */}
             <div className="space-y-2">
               <Label htmlFor="subject">Asignatura</Label>

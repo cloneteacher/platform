@@ -3,7 +3,7 @@
 import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { Id, Doc } from "./_generated/dataModel";
-import { internal } from "./_generated/api";
+import { internal, components } from "./_generated/api";
 import { rag } from "./rag";
 import pdfParse from "pdf-parse-new";
 import mammoth from "mammoth";
@@ -29,7 +29,9 @@ async function extractTextFromFile(
   if (fileType === "text/plain" || fileType === "text/txt") {
     return buffer.toString("utf-8");
   } else if (fileType === "application/pdf") {
-    const result = await pdfParse(buffer);
+    const result = await pdfParse(buffer, {
+      verbosityLevel: 0,
+    });
     return result.text;
   } else if (
     fileType ===
@@ -86,9 +88,60 @@ export const indexFile = internalAction({
         ],
       });
 
+      // Mark file as indexed in database
+      await ctx.runMutation(internal.files.markAsIndexed, {
+        fileId: args.fileId,
+      });
+
       return { success: true };
     } catch (error) {
       console.error(`Error indexing file ${args.fileName}:`, error);
+      return {
+        success: false,
+        reason: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  },
+});
+
+/**
+ * Remove embeddings for a file from RAG
+ */
+export const removeFileEmbeddings = internalAction({
+  args: {
+    fileId: v.id("topicFiles"),
+    topicId: v.id("topics"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      // First, get the namespaceId from the namespace string
+      // The RAG component stores namespaces with the topicId as the namespace string
+      const namespace = await ctx.runQuery(components.rag.namespaces.get, {
+        namespace: args.topicId as string,
+        dimension: 4096, // qwen3-embedding-8b has 4096 dimensions
+        filterNames: ["topicId", "fileId"],
+        modelId: "qwen/qwen3-embedding-8b",
+      });
+
+      if (!namespace) {
+        // Namespace doesn't exist, nothing to delete
+        console.warn(
+          `Namespace not found for topic ${args.topicId}, skipping deletion`
+        );
+        return { success: true };
+      }
+
+      // Delete embeddings from RAG using the fileId as key and the namespaceId
+      await ctx.runAction(components.rag.entries.deleteByKeySync, {
+        namespaceId: namespace.namespaceId,
+        key: args.fileId as string,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error(
+        `Error removing embeddings for file ${args.fileId}:`,
+        error
+      );
       return {
         success: false,
         reason: error instanceof Error ? error.message : "Unknown error",

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table";
-import { FileText, Download, Trash2, Upload } from "lucide-react";
+import { FileText, Download, Trash2, Upload, Loader2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { toast } from "react-hot-toast";
@@ -30,6 +30,7 @@ interface FilesListProps {
     fileName: string;
     fileType: string;
     uploadedAt: number;
+    indexedAt?: number;
     url: string | null;
   }>;
   topicId: Id<"topics">;
@@ -110,47 +111,76 @@ export function FilesList({ files, topicId }: FilesListProps) {
           <TableRow>
             <TableHead>Archivo</TableHead>
             <TableHead>Tipo</TableHead>
+            <TableHead>Estado</TableHead>
             <TableHead>Fecha de Subida</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {files.map((file) => (
-            <TableRow key={file._id}>
-              <TableCell>
-                <div className="flex items-center space-x-2">
-                  {getFileIcon(file.fileType)}
-                  <span className="font-medium">{file.fileName}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
-                  {file.fileType.split("/")[1]?.toUpperCase() || "FILE"}
-                </span>
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {formatDate(file.uploadedAt)}
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDownload(file.url, file.fileName)}
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteClick(file._id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {files.map((file) => {
+            const isIndexing = !file.indexedAt;
+            const supportedTypes = [
+              "application/pdf",
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/msword",
+              "text/plain",
+              "text/txt",
+            ];
+            const shouldShowIndexingStatus = supportedTypes.includes(
+              file.fileType
+            );
+
+            return (
+              <TableRow key={file._id}>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    {getFileIcon(file.fileType)}
+                    <span className="font-medium">{file.fileName}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
+                    {file.fileType.split("/")[1]?.toUpperCase() || "FILE"}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  {shouldShowIndexingStatus && isIndexing ? (
+                    <div className="flex items-center space-x-2 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-xs">Indexando...</span>
+                    </div>
+                  ) : shouldShowIndexingStatus ? (
+                    <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">
+                      Indexado
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">-</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formatDate(file.uploadedAt)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDownload(file.url, file.fileName)}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteClick(file._id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

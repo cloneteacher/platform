@@ -16,8 +16,15 @@ import Link from "next/link";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { FileUploadDialog } from "@/components/teacher/file-upload-dialog";
 import { FilesList } from "@/components/teacher/files-list";
+import { ExamResultsList } from "@/components/teacher/exam-results-list";
 import { useRoleGuard } from "@/hooks/use-role-guard";
 import { LoadingScreen } from "@/components/loading";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs";
 
 export default function TopicDetailPage({
   params,
@@ -31,13 +38,16 @@ export default function TopicDetailPage({
   });
   const topic = useQuery(api.topics.getById, { topicId });
   const files = useQuery(api.files.getByTopic, { topicId });
+  const examResults = useQuery(api.examActions.getExamResultsByTopic, {
+    topicId,
+  });
 
   // Show loading while checking role
   if (isCheckingRole || !hasAccess) {
     return <LoadingScreen message="Verificando permisos..." />;
   }
 
-  if (topic === undefined || files === undefined) {
+  if (topic === undefined || files === undefined || examResults === undefined) {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
@@ -103,18 +113,31 @@ export default function TopicDetailPage({
         </Card>
       </div>
 
-      {/* Files Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Archivos del Tema</CardTitle>
-          <CardDescription>
-            Gestiona los archivos y documentos de este tema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FilesList files={files} topicId={topicId} />
-        </CardContent>
-      </Card>
+      {/* Tabs */}
+      <Tabs defaultValue="files" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="files">Archivos</TabsTrigger>
+          <TabsTrigger value="results">Resultados de Exámenes</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="files" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Archivos del Tema</CardTitle>
+              <CardDescription>
+                Gestiona los archivos y documentos de este tema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FilesList files={files} topicId={topicId} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="results" className="space-y-4">
+          <ExamResultsList results={examResults} />
+        </TabsContent>
+      </Tabs>
 
       {/* Upload Dialog */}
       <FileUploadDialog

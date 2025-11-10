@@ -11,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import type { Components } from "react-markdown";
 import "katex/dist/katex.min.css";
 
@@ -200,6 +201,11 @@ function preprocessMathContent(content: string): string {
     return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
   });
 
+  // Fix: Prevent numbered titles like "1. Las plantas" from being interpreted as ordered lists
+  // We escape the dot after a number at the start of a line if it's followed by a capital letter
+  // This pattern matches: number + dot + space + capital letter (likely a title, not a list)
+  processed = processed.replace(/^(\d+)\.\s+([A-ZÁÉÍÓÚÑ])/gm, "$1\\. $2");
+
   processed = processed.replace(/\\\((.*?)\\\)/g, "$$1$");
 
   const latexCommands = [
@@ -324,7 +330,7 @@ export function ChatInterface({ topicId }: ChatInterfaceProps) {
                 <div className="text-sm [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                   <ReactMarkdown
                     remarkPlugins={[remarkMath, remarkGfm]}
-                    rehypePlugins={[rehypeKatex]}
+                    rehypePlugins={[rehypeRaw, rehypeKatex]}
                     components={markdownComponents}
                   >
                     {preprocessMathContent(message.content)}
